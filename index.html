@@ -25,7 +25,7 @@
     --sub: rgba(255,255,255,.55);
 }
 
-/* Красим системный фон, чтобы при скролле (эффект резинки) не было белых полей */
+/* Красим фон html, чтобы при скролле не было белой "резинки" на iOS */
 html {
     background-color: #050816; 
 }
@@ -37,7 +37,6 @@ body {
     font-family: 'Inter', sans-serif;
     color: white;
     transition: background 1s ease;
-    /* Фиксируем фон, чтобы он не уезжал при прокрутке */
     background-attachment: fixed;
     background-image: 
         radial-gradient(circle at top, var(--accent2) 0%, transparent 40%),
@@ -51,7 +50,7 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 
 /* AMBIENT & PARTICLES */
 .ambient {
-    position: fixed; /* Оставляем фон на месте при прокрутке */
+    position: fixed;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
@@ -136,7 +135,6 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 /* HEADER */
 .header { margin-bottom: 14px; }
 .logo h1 { 
-    /* Толстый системный шрифт Apple (SF Pro Display) */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     font-weight: 900; 
     font-size: 38px; 
@@ -383,7 +381,6 @@ function updateSliderUI(val) {
 slider.addEventListener('input', () => {
     updateSliderUI(slider.value);
     if (oscillator && playing) {
-        // Надежное прямое присваивание без ошибок iOS
         oscillator.frequency.value = Number(slider.value);
     }
 });
