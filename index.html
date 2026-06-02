@@ -17,6 +17,17 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Сброс стилей для новых кнопок */
+button {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
 :root {
     --accent: #60a5fa;
     --accent2: #3b82f6;
@@ -25,12 +36,12 @@
     --sub: rgba(255,255,255,.55);
 }
 
-/* Красим фон html, чтобы при скролле не было белой "резинки" на iOS */
 html {
     background-color: #050816; 
 }
 
 body {
+    min-height: 100vh; /* Фолбэк для старых устройств */
     min-height: 100dvh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -90,6 +101,7 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 .app {
     position: relative;
     z-index: 2;
+    min-height: 100vh;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -157,7 +169,7 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 
 .hero { border-radius: 32px; padding: 22px; margin-bottom: 16px; }
 
-/* ORB */
+/* ORB BUTTON */
 .orb-wrap { display: flex; justify-content: center; margin: 14px 0 22px; }
 
 .orb {
@@ -165,7 +177,6 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
     width: 175px; height: 175px;
     border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
-    cursor: pointer;
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.15), rgba(255,255,255,.02));
     border: 1px solid rgba(255,255,255,.08);
     box-shadow: inset 0 0 25px rgba(255,255,255,.03), 0 0 50px color-mix(in srgb, var(--accent) 25%, transparent);
@@ -180,16 +191,16 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 .orb h2 { font-size: 30px; letter-spacing: -1px; position: relative; z-index: 2; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 800; }
 
 /* VISUALIZER & SLIDER */
-.visualizer { width: 100%; height: 60px; margin-bottom: 18px; }
+.visualizer { width: 100%; height: 60px; margin-bottom: 18px; pointer-events: none; }
 .control { margin-bottom: 20px; }
 .control label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: var(--sub); }
 
 .slider { width: 100%; appearance: none; height: 6px; border-radius: 20px; background: linear-gradient(90deg, var(--accent) 65%, rgba(255,255,255,.08) 65%); }
 .slider::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; border: 4px solid rgba(255,255,255,.1); }
 
-/* MODES CARDS */
+/* MODES CARDS (Теперь это кнопки) */
 .modes { display: flex; gap: 8px; margin-bottom: 16px; }
-.mode { flex: 1; padding: 12px; border-radius: 20px; transition: transform .3s, background .3s, border .3s; cursor: pointer; border: 1px solid transparent; text-align: left; }
+.mode { flex: 1; padding: 12px; border-radius: 20px; transition: transform .3s, background .3s, border .3s; }
 .mode.active { background: rgba(255,255,255,.08); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent); }
 .mode h4 { margin-bottom: 4px; font-size: 14px; font-weight: 600; }
 .mode p { font-size: 11px; line-height: 1.3; color: var(--sub); }
@@ -200,7 +211,7 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 .card h3 { font-size: 16px; margin-bottom: 2px; font-weight: 700; }
 .card p { font-size: 11px; color: var(--sub); }
 
-/* BOTTOM SECTION & DOCK */
+/* BOTTOM SECTION & DOCK (Кнопки) */
 .bottom-section { margin-top: 10px; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
 
 .dock {
@@ -208,7 +219,7 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 }
 .dock-item {
     flex: 1; height: 46px; border-radius: 20px; display: flex; justify-content: center; align-items: center;
-    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.5); transition: all .3s ease; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: rgba(255,255,255,.5); transition: all .3s ease;
 }
 .dock-item.active { color: white; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.05); box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent); }
 
@@ -256,9 +267,9 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 
     <div class="hero glass">
         <div class="orb-wrap">
-            <div class="orb" id="orb">
+            <button class="orb" id="orb" type="button">
                 <h2 id="buttonText">СТАРТ</h2>
-            </div>
+            </button>
         </div>
 
         <canvas class="visualizer" id="visualizer"></canvas>
@@ -272,18 +283,18 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
         </div>
 
         <div class="modes">
-            <div class="mode glass active" data-mode="water">
+            <button class="mode glass active" data-mode="water" type="button">
                 <h4>Вода</h4>
                 <p>Выталкивание влаги</p>
-            </div>
-            <div class="mode glass" data-mode="bass">
+            </button>
+            <button class="mode glass" data-mode="bass" type="button">
                 <h4>Бас</h4>
                 <p>Низкие частоты</p>
-            </div>
-            <div class="mode glass" data-mode="smart">
+            </button>
+            <button class="mode glass" data-mode="smart" type="button">
                 <h4>Умный</h4>
                 <p>AI очистка</p>
-            </div>
+            </button>
         </div>
 
         <div class="stats">
@@ -304,10 +315,10 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 
     <div class="bottom-section">
         <div class="dock glass">
-            <div class="dock-item active" data-target="water">Очистка</div>
-            <div class="dock-item" data-target="bass">Усиление</div>
-            <div class="dock-item" data-target="water">Вода</div>
-            <div class="dock-item" data-target="smart">Умный</div>
+            <button class="dock-item active" data-target="water" type="button">Очистка</button>
+            <button class="dock-item" data-target="bass" type="button">Усиление</button>
+            <button class="dock-item" data-target="water" type="button">Вода</button>
+            <button class="dock-item" data-target="smart" type="button">Умный</button>
         </div>
         <div class="developer-signature">Разработчик EGORKIN</div>
         <div class="homebar"></div>
@@ -316,17 +327,24 @@ body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; 
 
 <script>
 /* =========================
-   ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP
+   БЕЗОПАСНАЯ ИНИЦИАЛИЗАЦИЯ TELEGRAM
 ========================= */
-const tg = window.Telegram?.WebApp;
-if (tg) { tg.expand(); }
+let tg = null;
+try {
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        if (tg.expand) tg.expand();
+    }
+} catch (e) {
+    console.log("Telegram WebApp не найден или ошибка инициализации");
+}
 
 /* =========================
    AUDIO & DATA LOGIC
 ========================= */
-let audioContext;
-let oscillator;
-let gainNode;
+let audioContext = null;
+let oscillator = null;
+let gainNode = null;
 
 let playing = false;
 let currentMode = 'water';
@@ -350,49 +368,73 @@ const statType = document.getElementById('statType');
 const flash = document.getElementById('flash');
 const timerDisplay = document.getElementById('timerDisplay');
 
+// Безопасное чтение из Cloud Storage
 if (tg && tg.CloudStorage) {
-    tg.CloudStorage.getItem('savedMode', (err, value) => {
-        if (!err && value && modeSettings[value]) {
-            switchMode(value, false);
-        }
-    });
+    try {
+        tg.CloudStorage.getItem('savedMode', function(err, value) {
+            if (!err && value && modeSettings[value]) {
+                switchMode(value, false);
+            }
+        });
+    } catch(e) {}
 }
 
-function triggerHaptic(style = 'light') {
-    if (tg && tg.HapticFeedback) {
-        tg.HapticFeedback.impactOccurred(style);
-    } else if (navigator.vibrate) {
-        navigator.vibrate(style === 'heavy' ? [50] : [20]);
-    }
+function triggerHaptic(style) {
+    if (!style) style = 'light';
+    try {
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred(style);
+        } else if (navigator.vibrate) {
+            navigator.vibrate(style === 'heavy' ? [50] : [20]);
+        }
+    } catch(e) {}
 }
 
 function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+    let m = Math.floor(seconds / 60).toString();
+    let s = (seconds % 60).toString();
+    if (m.length < 2) m = '0' + m;
+    if (s.length < 2) s = '0' + s;
+    return m + ':' + s;
 }
 
 function updateSliderUI(val) {
     freq.innerText = Math.floor(val) + 'Гц';
     let percent = (val / slider.max) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent) ${percent}%, rgba(255,255,255,.08) ${percent}%)`;
+    slider.style.background = 'linear-gradient(90deg, var(--accent) ' + percent + '%, rgba(255,255,255,.08) ' + percent + '%)';
 }
 
-slider.addEventListener('input', () => {
-    updateSliderUI(slider.value);
-    if (oscillator && playing) {
-        oscillator.frequency.value = Number(slider.value);
-    }
+// Привязываем и input, и change для старых устройств
+['input', 'change'].forEach(function(evt) {
+    slider.addEventListener(evt, function() {
+        updateSliderUI(slider.value);
+        if (oscillator && playing) {
+            oscillator.frequency.value = Number(slider.value);
+        }
+    });
 });
 
-function switchMode(modeName, haptic = true) {
+function switchMode(modeName, haptic) {
     if (currentMode === modeName) return;
     
     currentMode = modeName;
     document.body.className = currentMode;
     
-    document.querySelectorAll('.mode').forEach(m => m.classList.toggle('active', m.dataset.mode === currentMode));
-    document.querySelectorAll('.dock-item').forEach(t => t.classList.toggle('active', t.dataset.target === currentMode));
+    document.querySelectorAll('.mode').forEach(function(m) {
+        if (m.getAttribute('data-mode') === currentMode) {
+            m.classList.add('active');
+        } else {
+            m.classList.remove('active');
+        }
+    });
+    
+    document.querySelectorAll('.dock-item').forEach(function(t) {
+        if (t.getAttribute('data-target') === currentMode) {
+            t.classList.add('active');
+        } else {
+            t.classList.remove('active');
+        }
+    });
 
     let settings = modeSettings[currentMode];
     islandText.innerText = 'Режим: ' + settings.label;
@@ -400,7 +442,7 @@ function switchMode(modeName, haptic = true) {
     statType.innerText = settings.stat;
     
     if (tg && tg.CloudStorage) {
-        tg.CloudStorage.setItem('savedMode', currentMode);
+        try { tg.CloudStorage.setItem('savedMode', currentMode); } catch(e) {}
     }
 
     if (playing) {
@@ -414,8 +456,11 @@ function switchMode(modeName, haptic = true) {
 }
 
 function startAudio() {
+    let AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return; // Защита от браузеров без звука
+
     if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext = new AudioCtx();
     }
     if (audioContext.state === 'suspended') {
         audioContext.resume();
@@ -441,14 +486,14 @@ function startAudio() {
     oscillator.start();
 }
 
-function stopAudio(immediate = false) {
+function stopAudio(immediate) {
     if (oscillator && gainNode) {
         const stopTime = audioContext.currentTime + (immediate ? 0.05 : 0.3);
         gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime);
         
         oscillator.stop(stopTime);
-        setTimeout(() => {
+        setTimeout(function() {
             if(oscillator) oscillator.disconnect();
             oscillator = null;
         }, (immediate ? 50 : 300));
@@ -456,7 +501,7 @@ function stopAudio(immediate = false) {
 }
 
 function stopProcess() {
-    stopAudio();
+    stopAudio(false);
     clearInterval(timerInterval);
     playing = false;
     orb.classList.remove('active');
@@ -467,7 +512,9 @@ function stopProcess() {
     triggerHaptic('heavy');
 }
 
-orb.addEventListener('click', () => {
+// Слушатель для главной кнопки
+orb.addEventListener('click', function(e) {
+    e.preventDefault();
     triggerHaptic('heavy');
     if (!playing) {
         startAudio();
@@ -476,7 +523,7 @@ orb.addEventListener('click', () => {
         buttonText.innerText = 'СТОП';
         playing = true;
         
-        timerInterval = setInterval(() => {
+        timerInterval = setInterval(function() {
             timeLeft--;
             timerDisplay.innerText = formatTime(timeLeft);
             if(timeLeft <= 0) stopProcess();
@@ -487,19 +534,21 @@ orb.addEventListener('click', () => {
     }
 });
 
-// КЛИКИ: Центральные карточки
-document.querySelectorAll('.mode').forEach(mode => {
-    mode.addEventListener('click', () => {
+// КЛИКИ: Центральные карточки режимов
+document.querySelectorAll('.mode').forEach(function(mode) {
+    mode.addEventListener('click', function(e) {
+        e.preventDefault();
         triggerHaptic('medium');
-        switchMode(mode.dataset.mode);
+        switchMode(mode.getAttribute('data-mode'), true);
     });
 });
 
-// КЛИКИ: Нижний бар
-document.querySelectorAll('.dock-item').forEach(tab => {
-    tab.addEventListener('click', () => {
+// КЛИКИ: Нижний бар (Dock)
+document.querySelectorAll('.dock-item').forEach(function(tab) {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
         triggerHaptic('light');
-        switchMode(tab.dataset.target);
+        switchMode(tab.getAttribute('data-target'), true);
     });
 });
 
@@ -525,12 +574,12 @@ function drawVisualizer() {
     let speedMult = currentMode === 'bass' ? 110 : (currentMode === 'smart' ? 75 : 170);
 
     for (let i = 0; i < bars; i++) {
-        let wave = playing ? Math.sin(Date.now() / speedMult + i * .45) * 16 + 24 : 6;
+        let wave = playing ? Math.sin(Date.now() / speedMult + i * 0.45) * 16 + 24 : 6;
         let x = i * gap + 6;
         let y = visCanvas.height / 2 - wave / 2;
         
         let gradient = visCtx.createLinearGradient(0, 0, 0, visCanvas.height);
-        gradient.addColorStop(0, 'rgba(255,255,255,.95)');
+        gradient.addColorStop(0, 'rgba(255,255,255,0.95)');
         gradient.addColorStop(1, getComputedStyle(document.body).getPropertyValue('--accent'));
         
         visCtx.fillStyle = gradient;
@@ -581,7 +630,7 @@ class Particle {
     }
     draw() {
         if (this.life > 0) {
-            pCtx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.5})`;
+            pCtx.fillStyle = 'rgba(255, 255, 255, ' + (this.life * 0.5) + ')';
             pCtx.beginPath();
             pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             pCtx.fill();
@@ -595,8 +644,8 @@ function drawParticles() {
     requestAnimationFrame(drawParticles);
     pCtx.clearRect(0, 0, partCanvas.width, partCanvas.height);
     
-    if (playing || particles.some(p => p.life > 0)) {
-        particles.forEach(p => {
+    if (playing || particles.some(function(p) { return p.life > 0; })) {
+        particles.forEach(function(p) {
             p.update();
             p.draw();
         });
@@ -608,7 +657,7 @@ drawParticles();
    AUTO SWEEP
 ========================= */
 let lastDomUpdate = 0;
-setInterval(() => {
+setInterval(function() {
     if (playing) {
         let settings = modeSettings[currentMode];
         let value = Number(slider.value);
