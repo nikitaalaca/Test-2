@@ -47,14 +47,28 @@
         body.gold { --accent: #facc15; --accent-rgb: 250, 204, 21; --bg-1: #0f0b01; --bg-2: #241a04; --glow: rgba(250, 204, 21, 0.22); }
 
         html, body {
-            width: 100%; min-height: 100vh; overflow-x: hidden; overflow-y: auto;
-            background-color: var(--bg-1); font-family: 'Inter', sans-serif; color: white;
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            color: white;
             transition: background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        body {
+            padding-top: env(safe-area-inset-top);
         }
 
         /* ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
         .bg-fixed {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -3;
+            position: fixed;
+            top: calc(-1 * env(safe-area-inset-top));
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -3;
             background: linear-gradient(-45deg, var(--bg-1), var(--bg-2), #000000);
             background-size: 300% 300%; animation: gradAnim 12s ease infinite; transition: all 0.8s ease;
         }
@@ -79,7 +93,19 @@
         .toast-container.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         /* ЖЕСТКАЯ ФИКСАЦИЯ ОСТРОВКА IPHONE STYLE */
-        .top-bar-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 12px 0; display: flex; justify-content: center; pointer-events: none; }
+        .top-bar-container {
+            position: fixed;
+            top: env(safe-area-inset-top);
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 8px 0;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+            background: transparent;
+            backdrop-filter: none;
+        }
         .island-wrapper { width: 100%; display: flex; justify-content: center; pointer-events: auto; }
         .island {
             width: 220px; height: 40px; border-radius: 40px; background: #000000;
@@ -199,7 +225,10 @@
         .skin-item.active { color: #000; background: var(--accent); font-weight: 800; box-shadow: 0 0 12px var(--accent); border-color: transparent; }
 
         /* ТЕЛЕМЕТРИЧЕСКИЙ ЛОГЕР */
-        .logger-box { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 10px; font-family: monospace; font-size: 10px; color: rgba(255,255,255,0.4); height: 55px; overflow-hidden: scroll; border: 1px solid rgba(255,255,255,0.02); }
+        .logger-box { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 10px; font-family: monospace; font-size: 10px; color: rgba(255,255,255,0.4); height: 120px; overflow-y: auto;
+            overflow-x: hidden;
+            white-space: pre-wrap;
+            word-break: break-word; border: 1px solid rgba(255,255,255,0.02); }
 
         /* OLED ЭКОНОМИЯ СКРИН */
         #oledSaver { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
