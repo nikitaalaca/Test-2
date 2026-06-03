@@ -50,6 +50,30 @@ html, body {
     width: 100%;
     overflow-x: hidden;
 }
+   /* Убираем все отступы и фиксируем положение */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100dvh; /* Самый важный параметр для мобильных */
+    overflow: hidden;
+    background-color: #050816 !important; /* Цвет фона */
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* Растягиваем контейнер приложения */
+.app {
+    width: 100vw;
+    height: 100dvh;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    background-color: #050816;
+}
+
 
 body {
     font-family: 'Inter', sans-serif;
