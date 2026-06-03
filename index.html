@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
 <title>ОЧИСТКА PRO</title>
 
@@ -109,56 +109,68 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 16px;
+    padding: 0 16px 16px;
     padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
 /* =========================
    ИДЕАЛЬНЫЙ DYNAMIC ISLAND
 ========================= */
+/* Контейнер БЕЗ блюра по просьбе */
+.top-bar-container {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    margin: 0 -16px;
+    padding: env(safe-area-inset-top, 20px) 16px 16px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+}
+
 .island-wrapper {
     display: flex;
     justify-content: center;
-    margin: 4px 0 16px;
     position: relative;
-    z-index: 100;
-    min-height: 44px; /* Чтобы контент не прыгал при открытии */
+    min-height: 44px;
+    width: 100%;
 }
 
 .island {
-    width: 160px;
+    width: 195px; /* Расширили чтобы текст не слипался */
     height: 44px;
     border-radius: 40px;
     background: #000000;
     border: 1px solid rgba(255,255,255,0.05);
     overflow: hidden;
-    /* Пружинистая кривая анимации Apple */
-    transition: width 0.5s cubic-bezier(0.32, 0.72, 0, 1), 
-                height 0.5s cubic-bezier(0.32, 0.72, 0, 1), 
-                border-radius 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-                transform 0.2s;
+    transition: width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                border-radius 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
+                transform 0.2s, box-shadow 0.4s;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
 }
 
-.island:active { transform: scale(0.97); }
+.island:active { transform: scale(0.95); }
 
 .island.expanded {
-    width: 280px;
-    height: 150px;
-    border-radius: 32px;
+    width: 90vw;
+    max-width: 320px;
+    height: 140px; /* Уменьшили высоту, так как убрали кнопки времени */
+    border-radius: 36px;
     background: rgba(10, 10, 15, 0.98);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .island-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 18px;
+    padding: 0 20px;
     height: 44px;
     min-height: 44px;
     width: 100%;
@@ -167,7 +179,7 @@ body {
 .island-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .island-dot {
@@ -175,30 +187,30 @@ body {
     height: 8px;
     border-radius: 50%;
     background: var(--sub);
-    transition: background 0.3s, box-shadow 0.3s;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 
 .island-dot.active {
-    /* Точка перекрашивается в цвет режима автоматически */
     background: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
+    box-shadow: 0 0 12px var(--accent);
     animation: pulse-dot 1.5s infinite;
 }
 
 @keyframes pulse-dot {
     0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.5; }
+    50% { transform: scale(1.5); opacity: 0.6; }
 }
 
 .island-title { 
     font-size: 14px; 
     font-weight: 600; 
+    letter-spacing: 0.3px;
 }
 
 .island-timer { 
     font-variant-numeric: tabular-nums; 
     font-weight: 700; 
-    font-size: 14px;
+    font-size: 15px;
     color: var(--sub);
     transition: color 0.3s;
 }
@@ -210,8 +222,8 @@ body {
 .island-content {
     padding: 0 20px 20px;
     opacity: 0;
-    transform: translateY(15px);
-    transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    transform: translateY(10px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
     pointer-events: none;
     display: flex;
     flex-direction: column;
@@ -221,15 +233,15 @@ body {
 
 .island.expanded .island-content {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     pointer-events: auto;
-    transition-delay: 0.15s;
+    transition-delay: 0.1s;
 }
 
 .island-info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     font-size: 13px;
 }
 
@@ -237,7 +249,6 @@ body {
 .island-info-value { font-weight: 600; color: #fff; }
 
 .island-btn {
-    margin-top: 10px;
     background: rgba(255, 69, 58, 0.15);
     border: 1px solid rgba(255, 69, 58, 0.3);
     border-radius: 16px;
@@ -247,6 +258,7 @@ body {
     font-weight: 700;
     color: #ff453a;
     transition: all 0.2s;
+    margin-top: auto;
 }
 .island-btn:active { 
     background: rgba(255, 69, 58, 0.25);
@@ -254,7 +266,7 @@ body {
 }
 
 /* ЗАГОЛОВОК */
-.header { margin-bottom: 14px; text-align: center; }
+.header { margin-top: 10px; margin-bottom: 20px; text-align: center; }
 .logo h1 { font-family: -apple-system, sans-serif; font-weight: 900; font-size: 36px; letter-spacing: -1px; text-transform: uppercase; }
 .logo p { font-size: 13px; color: var(--sub); margin-top: 2px; }
 
@@ -271,8 +283,43 @@ body {
 
 .hero { padding: 24px 22px; margin-bottom: 16px; }
 
+/* УПРАВЛЕНИЕ ВРЕМЕНЕМ НА ГЛАВНОМ ЭКРАНЕ */
+.main-time-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.time-btn {
+    background: rgba(255,255,255,0.08);
+    padding: 10px 20px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.time-btn:active {
+    background: rgba(255,255,255,0.15);
+    transform: scale(0.92);
+}
+
+.main-time-display {
+    font-size: 20px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: white;
+}
+.main-time-display.active {
+    color: var(--accent);
+}
+
 /* КНОПКА СТАРТ */
-.orb-wrap { display: flex; justify-content: center; margin: 20px 0 30px; position: relative; }
+.orb-wrap { display: flex; justify-content: center; margin: 10px 0 30px; position: relative; }
 
 .orb {
     position: relative;
@@ -373,12 +420,38 @@ body {
 .flash { position: fixed; inset: 0; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 75%); pointer-events: none; opacity: 0; z-index: 100; transition: background 0.5s ease;}
 .flash.active { animation: flash .6s ease; }
 @keyframes flash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* СТИЛИ УВЕДОМЛЕНИЙ (TOAST) */
+.toast-container {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 20, 25, 0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    transition: top 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+    white-space: nowrap;
+}
+.toast-container.show {
+    top: 60px; /* Выезжает чуть ниже статус бара */
+}
 </style>
 </head>
 <body class="water">
 
 <div class="bg-fixed"></div>
 <div class="flash" id="flash"></div>
+
+<div class="toast-container" id="appToast">Уведомление</div>
 
 <div class="ambient">
     <div class="light one"></div>
@@ -388,30 +461,29 @@ body {
 
 <div class="app">
     
-    <div class="island-wrapper">
-        <div class="island" id="island">
-            <div class="island-header">
-                <div class="island-left">
-                    <div class="island-dot" id="islandDot"></div>
-                    <span class="island-title" id="islandTitle">Очистка</span>
+    <div class="top-bar-container">
+        <div class="island-wrapper">
+            <div class="island" id="island">
+                <div class="island-header">
+                    <div class="island-left">
+                        <div class="island-dot" id="islandDot"></div>
+                        <span class="island-title" id="islandTitle">Очистка</span>
+                    </div>
+                    <span class="island-timer" id="timerDisplay">02:00</span>
                 </div>
-                <span class="island-timer" id="timerDisplay">02:00</span>
-            </div>
-            
-            <div class="island-content">
-                <div class="island-info-row">
-                    <span class="island-info-label">Текущий режим:</span>
-                    <span class="island-info-value" id="islandModeName">Вода</span>
+                
+                <div class="island-content">
+                    <div class="island-info-row">
+                        <span class="island-info-label">Режим:</span>
+                        <span class="island-info-value" id="islandModeName">Вода</span>
+                    </div>
+                    <div class="island-info-row">
+                        <span class="island-info-label">Статус:</span>
+                        <span class="island-info-value" id="islandStatusText">Ожидание</span>
+                    </div>
+
+                    <button class="island-btn" id="islandStopBtn">ПРЕРВАТЬ</button>
                 </div>
-                <div class="island-info-row">
-                    <span class="island-info-label">Статус:</span>
-                    <span class="island-info-value" id="islandStatusText">Ожидание</span>
-                </div>
-                <div class="island-info-row">
-                    <span class="island-info-label">Частота:</span>
-                    <span class="island-info-value" id="islandFreqText">165 Гц</span>
-                </div>
-                <button class="island-btn" id="islandStopBtn">ПРЕРВАТЬ</button>
             </div>
         </div>
     </div>
@@ -424,6 +496,13 @@ body {
     </div>
 
     <div class="hero glass">
+        
+        <div class="main-time-controls">
+            <button class="time-btn" id="btnMinusTime">- 30 сек</button>
+            <div class="main-time-display" id="mainTimeDisplay">02:00</div>
+            <button class="time-btn" id="btnPlusTime">+ 30 сек</button>
+        </div>
+
         <div class="orb-wrap">
             <button class="orb" id="orb" type="button">
                 <h2 id="buttonText">СТАРТ</h2>
@@ -509,6 +588,20 @@ function triggerHaptic(style) {
     } catch(e) {}
 }
 
+/* ФУНКЦИЯ УВЕДОМЛЕНИЙ */
+let toastTimeout;
+function showToast(message, duration = 3000) {
+    const toast = document.getElementById('appToast');
+    toast.innerText = message;
+    toast.classList.add('show');
+    triggerHaptic('light');
+    
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
+}
+
 /* ПЕРЕМЕННЫЕ */
 let audioContext = null;
 let oscillator = null;
@@ -537,20 +630,21 @@ const statFreq = document.getElementById('statFreq');
 const statType = document.getElementById('statType');
 const flash = document.getElementById('flash');
 
-// Остров
+// Остров и Время
 const island = document.getElementById('island');
 const islandDot = document.getElementById('islandDot');
 const timerDisplay = document.getElementById('timerDisplay');
+const mainTimeDisplay = document.getElementById('mainTimeDisplay');
 const islandModeName = document.getElementById('islandModeName');
 const islandStatusText = document.getElementById('islandStatusText');
-const islandFreqText = document.getElementById('islandFreqText');
 const islandStopBtn = document.getElementById('islandStopBtn');
+const btnMinusTime = document.getElementById('btnMinusTime');
+const btnPlusTime = document.getElementById('btnPlusTime');
 let isIslandOpen = false;
 
 /* ЛОГИКА ОСТРОВКА */
 island.addEventListener('click', function(e) {
-    // Не закрываем остров, если нажали на кнопку остановки
-    if (e.target.closest('#islandStopBtn')) return;
+    if (e.target.closest('button')) return;
     
     isIslandOpen = !isIslandOpen;
     triggerHaptic('light');
@@ -562,11 +656,36 @@ island.addEventListener('click', function(e) {
 });
 
 islandStopBtn.addEventListener('click', function(e) {
-    e.stopPropagation(); // Предотвращаем срабатывание клика по самому острову
+    e.stopPropagation();
     triggerHaptic('heavy');
     if (playing) stopProcess();
     island.classList.remove('expanded');
     isIslandOpen = false;
+});
+
+// УПРАВЛЕНИЕ ВРЕМЕНЕМ
+function setTimeLeft(seconds) {
+    timeLeft = seconds;
+    let formatted = formatTime(seconds);
+    timerDisplay.innerText = formatted;
+    mainTimeDisplay.innerText = formatted;
+}
+
+btnPlusTime.addEventListener('click', function(e) {
+    e.stopPropagation();
+    triggerHaptic('medium');
+    setTimeLeft(timeLeft + 30);
+});
+
+btnMinusTime.addEventListener('click', function(e) {
+    e.stopPropagation();
+    triggerHaptic('medium');
+    if (timeLeft > 30) {
+        setTimeLeft(timeLeft - 30);
+    } else {
+        setTimeLeft(0);
+        if (playing) stopProcess();
+    }
 });
 
 /* ОСНОВНАЯ ЛОГИКА */
@@ -579,7 +698,6 @@ function formatTime(seconds) {
 function updateSliderUI(val) {
     let hz = Math.floor(val) + 'Гц';
     freq.innerText = hz;
-    islandFreqText.innerText = hz; // Обновляем частоту в открытом острове
     
     let percent = ((val - slider.min) / (slider.max - slider.min)) * 100;
     slider.style.background = `linear-gradient(90deg, var(--accent) ${percent}%, rgba(255,255,255,.08) ${percent}%)`;
@@ -616,7 +734,6 @@ function switchMode(modeName) {
     statFreq.innerText = settings.maxF + 'Гц';
     statType.innerText = settings.stat;
     
-    // Обновляем текст внутри острова
     islandModeName.innerText = settings.label;
     
     if (playing) {
@@ -664,8 +781,10 @@ function stopAudio(immediate) {
         
         oscillator.stop(stopTime);
         setTimeout(() => {
-            if(oscillator) oscillator.disconnect();
-            oscillator = null;
+            if(oscillator) {
+                oscillator.disconnect();
+                oscillator = null;
+            }
         }, (immediate ? 50 : 300));
     }
 }
@@ -676,12 +795,16 @@ function stopProcess() {
     playing = false;
     orb.classList.remove('active');
     buttonText.innerText = 'СТАРТ';
-    timeLeft = 120;
     
-    // Возвращаем остров в состояние покоя
+    // Сброс времени только если дошло до 0
+    if (timeLeft <= 0) {
+        setTimeLeft(120);
+        showToast('✅ Очистка завершена!');
+    }
+    
     islandDot.classList.remove('active');
     timerDisplay.classList.remove('active');
-    timerDisplay.innerText = formatTime(timeLeft);
+    mainTimeDisplay.classList.remove('active');
     islandStatusText.innerText = 'Ожидание';
     islandStatusText.style.color = 'var(--sub)';
 }
@@ -695,15 +818,17 @@ orb.addEventListener('click', function(e) {
         buttonText.innerText = 'СТОП';
         playing = true;
         
-        // Оживляем остров
         islandDot.classList.add('active');
         timerDisplay.classList.add('active');
+        mainTimeDisplay.classList.add('active');
         islandStatusText.innerText = 'В процессе...';
         islandStatusText.style.color = 'var(--accent)';
         
+        // Показываем подсказку
+        showToast('🔊 Сделайте звук на максимум!', 4000);
+        
         timerInterval = setInterval(() => {
-            timeLeft--;
-            timerDisplay.innerText = formatTime(timeLeft);
+            setTimeLeft(timeLeft - 1);
             if(timeLeft <= 0) stopProcess();
         }, 1000);
 
