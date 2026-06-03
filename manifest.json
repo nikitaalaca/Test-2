@@ -1,20 +1,20 @@
 {
-  "name": "ОЧИСТКА PRO",
+  "name": "Очистка PRO",
   "short_name": "Очистка",
-  "description": "Профессиональное приложение для обслуживания динамиков",
+  "description": "Приложение для очистки динамика смартфона",
   "start_url": "./index.html",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#050816",
   "theme_color": "#050816",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
