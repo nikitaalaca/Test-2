@@ -6,303 +6,217 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050816">
+    <meta name="theme-color" content="#030712">
 
-    <title>ОЧИСТКА PRO v2.2</title>
+    <title>ОЧИСТКА PRO v3.0 Ultimate</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        /* =========================
-           ОСНОВНЫЕ СТИЛИ И СБРОС
-        ========================= */
+        /* ==========================================================================
+           БАЗОВЫЙ СБРОС И ЛИКВИД-ГЛАССМОРФИЗМ СТИЛИ СИСТЕМЫ
+           ========================================================================== */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-user-select: none;
         }
 
         ::-webkit-scrollbar { display: none; }
 
-        button {
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: inherit;
-            color: inherit;
-            cursor: pointer;
-        }
+        button { border: none; outline: none; background: transparent; font-family: inherit; color: inherit; cursor: pointer; }
 
         :root {
-            --accent: #60a5fa;
-            --accent2: #3b82f6;
-            --bg1: #050816;
-            --bg2: #09111f;
-            --sub: rgba(255,255,255,.55);
+            --accent: #38bdf8; --accent-rgb: 56, 189, 248;
+            --bg-1: #030712; --bg-2: #0b1528;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glow: rgba(56, 189, 248, 0.15);
+            --sub: rgba(255, 255, 255, 0.5);
+            --blur-radius: 30px;
         }
 
-        /* ЦВЕТОВЫЕ ТЕМЫ (СКИНЫ) */
-        body.water { --accent:#60a5fa; --accent2:#2563eb; --bg1:#050816; --bg2:#09111f; }
-        body.bass { --accent:#a855f7; --accent2:#7c3aed; --bg1:#12081c; --bg2:#170f2c; }
-        body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; }
-        body.cyber { --accent:#f43f5e; --accent2:#d946ef; --bg1:#1e0523; --bg2:#0f0210; }
-        body.volcano { --accent:#f97316; --accent2:#ef4444; --bg1:#1c0a05; --bg2:#0f0502; }
+        /* СКИНЫ ОФОРМЛЕНИЯИНТЕРФЕЙСА (ТОЛЬКО ЦВЕТА И ПРЕЛОМЛЕНИЯ СВЕТА) */
+        body.water { --accent: #38bdf8; --accent-rgb: 56, 189, 248; --bg-1: #030712; --bg-2: #0c1b33; --glow: rgba(56, 189, 248, 0.18); }
+        body.bass { --accent: #c084fc; --accent-rgb: 192, 132, 252; --bg-1: #070212; --bg-2: #16072b; --glow: rgba(192, 132, 252, 0.22); }
+        body.smart { --accent: #4ade80; --accent-rgb: 74, 222, 128; --bg-1: #02140f; --bg-2: #052e22; --glow: rgba(74, 222, 128, 0.18); }
+        body.cyber { --accent: #f43f5e; --accent-rgb: 244, 63, 94; --bg-1: #0f0113; --bg-2: #24022e; --glow: rgba(244, 63, 94, 0.25); }
+        body.volcano { --accent: #fb923c; --accent-rgb: 251, 146, 60; --bg-1: #0f0402; --bg-2: #2b0b04; --glow: rgba(251, 146, 60, 0.25); }
+        body.space { --accent: #e2e8f0; --accent-rgb: 226, 232, 240; --bg-1: #020205; --bg-2: #111116; --glow: rgba(226, 232, 240, 0.1); }
+        body.gold { --accent: #facc15; --accent-rgb: 250, 204, 21; --bg-1: #0f0b01; --bg-2: #241a04; --glow: rgba(250, 204, 21, 0.22); }
 
         html, body {
-            width: 100%;
-            min-height: 100vh;
-            overflow-x: hidden;
-            overflow-y: auto;
-            background-color: #050816;
-            font-family: 'Inter', sans-serif;
-            color: white;
+            width: 100%; min-height: 100vh; overflow-x: hidden; overflow-y: auto;
+            background-color: var(--bg-1); font-family: 'Inter', sans-serif; color: white;
+            transition: background-color 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         /* ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
         .bg-fixed {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -3;
-            background: linear-gradient(-45deg, #050816, #0c152b, #160a2b, #07160d);
-            background-size: 400% 400%;
-            animation: gradientAnimation 20s ease infinite;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -3;
+            background: linear-gradient(-45deg, var(--bg-1), var(--bg-2), #000000);
+            background-size: 300% 300%; animation: gradAnim 12s ease infinite; transition: all 0.8s ease;
         }
+        @keyframes gradAnim { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        .blur-layer { position: fixed; inset: 0; backdrop-filter: blur(var(--blur-radius)); -webkit-backdrop-filter: blur(var(--blur-radius)); z-index: -1; background: rgba(0, 0, 0, 0.15); transition: backdrop-filter 0.3s; }
+        .ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -2; }
+        .light { position: absolute; width: 500px; height: 500px; border-radius: 50%; opacity: 0.22; filter: blur(120px); transform: translateZ(0); animation: floatLayer 10s infinite ease-in-out; transition: background 0.8s ease; }
+        .light.one { background: var(--accent); top: -60px; left: -60px; }
+        .light.two { background: var(--accent); right: -60px; bottom: -60px; animation-delay: 3s; }
+        @keyframes floatLayer { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px, 40px) scale(1.1); } }
 
-        .blur-layer {
-            position: fixed;
-            inset: 0;
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
-            z-index: -1;
-            background: rgba(5, 8, 22, 0.3);
-        }
-
-        .ambient {
-            position: fixed;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: -2;
-        }
-
-        .light {
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            border-radius: 50%;
-            opacity: 0.35;
-            filter: blur(80px);
-            transform: translateZ(0);
-            animation: float 15s infinite ease-in-out;
-        }
-
-        .light.one { background: var(--accent2); top: -50px; left: -50px; }
-        .light.two { background: var(--accent); right: -50px; bottom: -50px; animation-delay: 5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0,0) scale(1); }
-            50% { transform: translate(50px, 60px) scale(1.2); }
-        }
-
-        /* УВЕДОМЛЕНИЯ (TOAST) */
+        /* ТОАСТ УВЕДОМЛЕНИЯ */
         .toast-container {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(10, 15, 30, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 14px 28px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 100000;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
-            opacity: 0;
-            pointer-events: none;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
+            background: rgba(10, 12, 22, 0.9); border: 1px solid var(--glass-border);
+            padding: 14px 24px; border-radius: 20px; font-size: 13px; font-weight: 600; z-index: 100000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            opacity: 0; pointer-events: none; text-align: center; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px var(--glow);
         }
-        .toast-container.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .toast-container.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* ЖЕСТКАЯ ФИКСАЦИЯ ОСТРОВКА ДЛЯ СКРОЛЛА */
-        .top-bar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 10px 0;
-            display: flex;
-            justify-content: center;
-            pointer-events: none; /* Пропускает клики сквозь пустую область контейнера */
-        }
-
-        .island-wrapper { 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            pointer-events: auto; /* Возвращает кликабельность самому островку */
-        }
-
+        /* ЖЕСТКАЯ ФИКСАЦИЯ ОСТРОВКА IPHONE STYLE */
+        .top-bar-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 12px 0; display: flex; justify-content: center; pointer-events: none; }
+        .island-wrapper { width: 100%; display: flex; justify-content: center; pointer-events: auto; }
         .island {
-            width: 225px; height: 44px; border-radius: 40px; background: #000000;
-            border: 1px solid rgba(255,255,255,0.05); overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; display: flex; flex-direction: column;
+            width: 220px; height: 40px; border-radius: 40px; background: #000000;
+            border: 1px solid rgba(255,255,255,0.07); overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); cursor: pointer; display: flex; flex-direction: column;
         }
-
         .island.expanded {
-            width: 100%; max-width: 340px; height: 165px; border-radius: 32px;
-            background: rgba(5, 5, 10, 0.98); border: 1px solid rgba(255,255,255,0.15);
+            width: 100%; max-width: 345px; height: 175px; border-radius: 30px;
+            background: rgba(5, 6, 12, 0.99); border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px var(--glow);
         }
-
-        .island-header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 44px; min-height: 44px; }
-        .island-left { display: flex; align-items: center; gap: 10px; }
-        .island-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sub); transition: all 0.3s; }
-        .island-dot.active { background: var(--accent); box-shadow: 0 0 12px var(--accent); animation: pulse-dot 1.5s infinite; }
-        @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
-        .island-title { font-size: 14px; font-weight: 600; }
-        .island-timer { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; color: var(--sub); }
+        .island-header { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; height: 40px; min-height: 40px; }
+        .island-left { display: flex; align-items: center; gap: 8px; }
+        .island-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sub); transition: all 0.3s; }
+        .island-dot.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: dotPulse 1s infinite; }
+        @keyframes dotPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.4; } }
+        .island-title { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }
+        .island-timer { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14px; color: var(--sub); }
         .island-timer.active { color: var(--accent); }
-        
-        .island-content { padding: 0 20px 20px; opacity: 0; transform: translateY(10px); transition: all 0.4s; pointer-events: none; display: flex; flex-direction: column; flex: 1; }
+        .island-content { padding: 0 20px 20px; opacity: 0; transform: translateY(8px); transition: all 0.3s ease; pointer-events: none; display: flex; flex-direction: column; flex: 1; }
         .island.expanded .island-content { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .island-info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-        .island-info-label { color: var(--sub); }
-        .island-btn { background: rgba(255, 69, 58, 0.15); border: 1px solid rgba(255, 69, 58, 0.3); border-radius: 14px; padding: 8px; width: 100%; font-size: 13px; font-weight: 700; color: #ff453a; margin-top: auto; }
+        .island-info-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px; }
+        .island-btn { background: rgba(255, 69, 58, 0.12); border: 1px solid rgba(255, 69, 58, 0.25); border-radius: 12px; padding: 7px; width: 100%; font-size: 12px; font-weight: 700; color: #ff453a; margin-top: auto; }
 
         /* КОНТЕЙНЕР ПРИЛОЖЕНИЯ */
         .app {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            padding: 0 16px 40px;
-            /* Отступ сверху увеличен, чтобы контент не заезжал под фиксированный островок */
-            padding-top: calc(75px + env(safe-area-inset-top, 10px));
+            position: relative; z-index: 2; width: 100%; max-width: 480px; margin: 0 auto;
+            display: flex; flex-direction: column; padding: 0 16px 50px;
+            padding-top: calc(75px + env(safe-area-inset-top, 12px));
         }
 
-        /* КАРТОЧКИ СТЕКЛА */
+        /* ЖИДКОЕ СТЕКЛО (GLASSMORTPHISM CARD) */
         .glass {
-            position: relative;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255,255,255,.06);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 20px 40px rgba(0,0,0,.25);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
+            position: relative; background: linear-gradient(135deg, var(--glass-bg), rgba(255, 255, 255, 0.005));
+            border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255,255,255,0.06), 0 0 25px var(--glow);
+            border-radius: 28px; padding: 22px; margin-bottom: 16px;
+            transition: border-color 0.5s, box-shadow 0.5s, background 0.5s;
         }
 
-        .header { margin: 15px 0; text-align: center; }
-        .logo h1 { font-weight: 900; font-size: 34px; letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logo p { font-size: 13px; color: var(--sub); }
+        .header { margin: 10px 0 15px; text-align: center; }
+        .logo h1 { font-weight: 900; font-size: 34px; letter-spacing: -1.5px; text-transform: uppercase; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: 0.5s; }
+        .logo p { font-size: 11px; color: var(--sub); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 2px; }
 
-        .main-time-controls { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
-        .time-btn { background: rgba(255,255,255,0.06); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: 0.2s; text-align: center; }
+        .main-time-controls { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-radius: 18px; padding: 5px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.02); }
+        .time-btn { background: rgba(255,255,255,0.04); padding: 12px 18px; border-radius: 14px; font-size: 12px; font-weight: 700; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.02); }
         .time-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.12); }
-        .time-btn.active { background: var(--accent); color: #000; }
+        .time-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
 
-        /* ОРБ КНОПКА */
-        .orb-wrap { display: flex; justify-content: center; margin: 10px 0 25px; position: relative; }
+        /* ЦЕНТРАЛЬНЫЙ УПРАВЛЯЮЩИЙ ОРБ */
+        .orb-wrap { display: flex; justify-content: center; margin: 10px 0 20px; position: relative; }
         .orb {
             position: relative; width: 160px; height: 160px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), rgba(255,255,255,.02));
-            border: 1px solid rgba(255,255,255,.1);
-            box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 20%, transparent);
-            transition: all 0.2s; z-index: 10;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 0 30px var(--glow);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 10;
         }
-        .orb.active { animation: breathe 1.5s infinite ease-in-out; border-color: var(--accent); }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-        .orb h2 { font-size: 26px; font-weight: 800; }
-
-        .visualizer { width: 100%; height: 50px; margin-bottom: 20px; }
-
-        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--sub); margin-bottom: 12px; margin-top: 10px; }
-        .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
         
-        .opt-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 16px; text-align: left; transition: 0.2s; }
-        .opt-btn.active { background: color-mix(in srgb, var(--accent) 15%, transparent); border-color: var(--accent); }
+        /* Стили физического резонанса при тяжелой работе */
+        @keyframes bassShock {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.06) translate(-2px, 1px); }
+            40% { transform: scale(0.96) translate(1px, -2px); }
+            60% { transform: scale(1.04) translate(-1px, -1px); }
+            80% { transform: scale(0.98) translate(2px, 2px); }
+        }
+        .orb.shake-heavy { animation: bassShock 0.1s infinite linear; border-color: var(--accent); box-shadow: 0 0 45px var(--accent); }
+        
+        @keyframes regularBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .orb.active:not(.shake-heavy) { animation: regularBreathe 1.8s infinite ease-in-out; border-color: var(--accent); box-shadow: 0 0 40px var(--accent); }
+        .orb h2 { font-size: 25px; font-weight: 900; letter-spacing: 0.5px; }
 
-        /* ВЫДЕЛЕННАЯ КНОПКА ТУРБО */
+        /* СВЕТОДИОД КЛИППИНГА / ПЕРЕГРУЗКИ */
+        .clip-indicator { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #222; transition: 0.3s; }
+        .clip-indicator.clipping { background: #ff453a; box-shadow: 0 0 10px #ff453a; animation: pulseFast 0.2s infinite alternate; }
+        @keyframes pulseFast { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .visualizer { width: 100%; height: 60px; margin-bottom: 18px; border-radius: 14px; background: rgba(0,0,0,0.1); }
+
+        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--sub); margin-bottom: 12px; margin-top: 8px; }
+        .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+        
+        .opt-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: left; transition: all 0.2s; font-size: 13px; font-weight: 600; }
+        .opt-btn.active { background: rgba(var(--accent-rgb), 0.12); border-color: var(--accent); color: white; box-shadow: inset 0 0 8px rgba(var(--accent-rgb), 0.1); }
+
+        /* ТУРБО БАТТН */
         .turbo-btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 14px;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 14px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            text-align: center;
-            transition: 0.3s;
-            width: 100%;
-            margin-bottom: 20px;
-            color: var(--sub);
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px; border-radius: 16px; font-weight: 900; font-size: 13px; letter-spacing: 2px;
+            text-transform: uppercase; text-align: center; transition: all 0.3s; width: 100%; margin-bottom: 20px; color: var(--sub);
         }
-        .turbo-btn.active {
-            background: linear-gradient(90deg, #ef4444, #f97316);
-            border-color: #ff453a;
-            color: white;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-        }
+        .turbo-btn.active { background: linear-gradient(90deg, #ef4444, #f97316); border-color: #ff453a; color: white; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35), 0 0 20px #ef4444; transform: scale(1.01); }
 
         .slider-wrapper { margin-bottom: 20px; }
-        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px; background: rgba(255,255,255,0.1); outline: none; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; cursor: pointer; }
+        .slider { -webkit-appearance: none; width: 100%; height: 5px; border-radius: 10px; background: rgba(255,255,255,0.07); outline: none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; cursor: pointer; box-shadow: 0 0 10px rgba(255,255,255,0.4); }
 
-        /* РЕЖИМЫ РАБОТЫ (ТОЛЬКО АУДИО АЛГОРИТМЫ) */
-        .modes { display: flex; gap: 8px; margin-bottom: 16px; }
-        .mode { flex: 1; padding: 12px; border-radius: 16px; text-align: center; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255,255,255,0.06); }
-        .mode.active { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid var(--accent); }
-        .mode h4 { font-size: 13px; margin-bottom: 2px; } .mode p { font-size: 10px; color: var(--sub); }
+        /* КАРТОЧКИ ЗВУКОВЫХ АЛГОРИТМОВ */
+        .modes { display: flex; gap: 8px; margin-bottom: 14px; }
+        .mode { flex: 1; padding: 12px 8px; border-radius: 16px; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); transition: 0.25s; }
+        .mode.active { background: rgba(var(--accent-rgb), 0.12); border: 1px solid var(--accent); box-shadow: 0 0 15px var(--glow); }
+        .mode h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; } .mode p { font-size: 10px; color: var(--sub); }
 
-        .mic-box { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 16px; margin-bottom: 16px; }
-        .mic-db { font-weight: 700; color: var(--accent); }
+        .mic-box { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 15px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.02); }
+        .mic-db { font-weight: 800; color: var(--accent); }
 
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .card { padding: 10px; border-radius: 14px; text-align: center; }
-        .card h3 { font-size: 15px; } .card p { font-size: 10px; color: var(--sub); }
+        /* ТЕЛЕМЕТРИЯ И СТАТИСТИКА */
+        .stats-grid-extended { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+        .card-ext { padding: 10px 4px; border-radius: 14px; text-align: center; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); }
+        .card-ext h3 { font-size: 14px; font-weight: 800; } .card-ext p { font-size: 9px; color: var(--sub); margin-top: 1px; text-transform: uppercase; font-weight: 500; }
 
-        /* ИЗОЛИРОВАННЫЙ БЛОК ДЛЯ ВИЗУАЛЬНЫХ СКИНОВ */
-        .skin-container { display: flex; flex-direction: column; gap: 6px; padding: 6px; border-radius: 20px; background: rgba(0,0,0,0.2); }
-        .skin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .skin-item { height: 40px; border-radius: 12px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
-        .skin-item.active { color: white; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
+        /* ИЗОЛИРОВАННЫЙ БЛОК СКИНОВ */
+        .skin-container { display: flex; flex-direction: column; gap: 6px; }
+        .skin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .skin-item { height: 38px; border-radius: 12px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.35); display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); transition: all 0.25s; }
+        .skin-item.active { color: #000; background: var(--accent); font-weight: 800; box-shadow: 0 0 12px var(--accent); border-color: transparent; }
 
-        /* ЭКО-ЭКРАН */
+        /* ТЕЛЕМЕТРИЧЕСКИЙ ЛОГЕР */
+        .logger-box { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 10px; font-family: monospace; font-size: 10px; color: rgba(255,255,255,0.4); height: 55px; overflow-hidden: scroll; border: 1px solid rgba(255,255,255,0.02); }
+
+        /* OLED ЭКОНОМИЯ СКРИН */
         #oledSaver { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
-        #oledSaver p { color: #333; font-size: 12px; margin-top: 20px; }
+        #oledSaver p { color: #1c1c1c; font-size: 11px; margin-top: 15px; font-weight: 600; letter-spacing: 0.5px; }
 
-        .developer-signature { font-size: 9px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 15px; letter-spacing: 1px; }
+        .developer-signature { font-size: 9px; color: rgba(255,255,255,0.12); text-align: center; margin-top: 18px; letter-spacing: 1px; font-weight: 500; }
     </style>
 </head>
 <body class="water">
 
 <div class="bg-fixed"></div>
-<div class="blur-layer"></div>
-<div class="toast-container" id="appToast">Уведомление</div>
+<div class="blur-layer" id="blurLayer"></div>
+<div class="toast-container" id="appToast">Инфо</div>
 
 <div id="oledSaver">
-    <div class="island-timer active" id="saverTimer" style="font-size: 48px;">02:00</div>
-    <p>Тапните по экрану для выхода из режима энергосбережения</p>
+    <div class="island-timer active" id="saverTimer" style="font-size: 54px;">02:00</div>
+    <p>Коснитесь экрана для возврата в WebApp</p>
 </div>
 
 <div class="ambient">
@@ -321,9 +235,9 @@
                 <span class="island-timer" id="timerDisplay">02:00</span>
             </div>
             <div class="island-content">
-                <div class="island-info-row"><span class="island-info-label">Режим:</span><span id="islandModeName">Вода</span></div>
-                <div class="island-info-row"><span class="island-info-label">Вода на выходе:</span><span id="islandWaterOut">0.00 мл</span></div>
-                <button class="island-btn" id="islandStopBtn">ПРЕРВАТЬ СЕССИЮ</button>
+                <div class="island-info-row"><span class="island-info-label">Дренаж:</span><span id="islandModeName">Вода</span></div>
+                <div class="island-info-row"><span class="island-info-label">Выброс влаги:</span><span id="islandWaterOut">0.00 мл</span></div>
+                <button class="island-btn" id="islandStopBtn">ОСТАНОВИТЬ СЕССИЮ</button>
             </div>
         </div>
     </div>
@@ -333,14 +247,16 @@
     <div class="header">
         <div class="logo">
             <h1>ОЧИСТКА PRO</h1>
-            <p>Акустический дренаж и диагностика смартфона</p>
+            <p>Акустический дренаж и ультра-диагностика</p>
         </div>
     </div>
 
     <div class="hero glass">
+        <div class="clip-indicator" id="clipLed"></div>
+        
         <div class="main-time-controls">
             <button class="time-btn" id="btnMinusTime">-30с</button>
-            <div class="main-time-display" id="mainTimeDisplay" style="font-size:22px; font-weight:800;">02:00</div>
+            <div class="main-time-display" id="mainTimeDisplay" style="font-size:21px; font-weight:900; font-variant-numeric: tabular-nums;">02:00</div>
             <button class="time-btn" id="btnPlusTime">+30с</button>
         </div>
 
@@ -352,147 +268,171 @@
 
         <button class="turbo-btn" id="turboToggle">Турбо буст 200%</button>
 
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; font-weight: 700;">
             <div>Текущая частота: <strong id="freq" style="color:var(--accent);">165 Гц</strong></div>
+            <div style="color: var(--sub);" id="etaDisplay">ETA: ~02:00</div>
         </div>
         <div class="slider-wrapper">
             <input type="range" class="slider" id="slider" min="20" max="20000" value="165">
         </div>
 
         <div class="section-title">Быстрые пресеты частот</div>
-        <div style="display:flex; gap:6px; margin-bottom:15px;">
+        <div style="display:flex; gap:6px; margin-bottom:14px;">
             <button class="time-btn" onclick="setPresetFreq(60)">60 Гц</button>
             <button class="time-btn" onclick="setPresetFreq(150)">150 Гц</button>
             <button class="time-btn" onclick="setPresetFreq(440)">440 Гц</button>
-            <button class="time-btn" onclick="setPresetFreq(1000)">1 кГц</button>
+            <button class="time-btn" onclick="setPresetFreq(12000)">12 кГц</button>
         </div>
 
-        <div class="section-title">Задать таймер сессии</div>
-        <div style="display:flex; gap:6px; margin-bottom:15px;">
-            <button class="time-btn" onclick="setPresetTime(60)">1 Мин</button>
-            <button class="time-btn" onclick="setPresetTime(180)">3 Мин</button>
-            <button class="time-btn" onclick="setPresetTime(300)">5 Мин</button>
-        </div>
-
-        <div class="section-title">Режимы очистки</div>
+        <div class="section-title">Аудио Алгоритмы Очистки</div>
         <div class="modes">
             <button class="mode active" data-mode="water"><h4>Вода</h4><p>Выталкивание</p></button>
             <button class="mode" data-mode="bass"><h4>Бас</h4><p>Глубокий удар</p></button>
-            <button class="mode" data-mode="smart"><h4>Умный</h4><p>AI Алгоритм</p></button>
+            <button class="mode" data-mode="smart"><h4>Умный</h4><p>AI Скан</p></button>
         </div>
     </div>
 
     <div class="glass">
-        <div class="section-title">Форма звуковой волны</div>
+        <div class="section-title">Форма Звуковой Волны</div>
         <div class="grid-options">
             <button class="opt-btn active" id="wave_sine" onclick="setWaveform('sine')">Синусоида</button>
             <button class="opt-btn" id="wave_square" onclick="setWaveform('square')">Квадрат (Жесткий)</button>
             <button class="opt-btn" id="wave_triangle" onclick="setWaveform('triangle')">Треугольник</button>
-            <button class="opt-btn" id="wave_sawtooth" onclick="setWaveform('sawtooth')">Пила (Максимум)</button>
+            <button class="opt-btn" id="wave_sawtooth" onclick="setWaveform('sawtooth')">Пила (Макс)</button>
         </div>
 
-        <div class="section-title">Локация очистки (Стерео)</div>
-        <div style="display:flex; gap:6px; margin-bottom:15px;">
-            <button class="time-btn active" id="chan_center" onclick="setChannel(0)">Оба динамика</button>
+        <div class="section-title">Локация стерео-каналов</div>
+        <div style="display:flex; gap:6px; margin-bottom:14px;">
+            <button class="time-btn active" id="chan_center" onclick="setChannel(0)">Оба (Стерео)</button>
             <button class="time-btn" id="chan_left" onclick="setChannel(-1)">Левый</button>
             <button class="time-btn" id="chan_right" onclick="setChannel(1)">Правый</button>
         </div>
 
-        <div class="section-title">Специальные Утилиты</div>
+        <div class="section-title">Специнструменты И Модуляции</div>
         <div class="grid-options">
             <button class="opt-btn" id="modeSweep" onclick="toggleSweep()">Частотный Свип</button>
-            <button class="opt-btn" id="modePulse" onclick="togglePulse()">Импульсы (Удар)</button>
+            <button class="opt-btn" id="modePulse" onclick="togglePulse()">Импульсный Удар</button>
             <button class="opt-btn" id="modeNoise" onclick="toggleNoise()">Белый Шум</button>
+            <button class="opt-btn" id="modePink" onclick="togglePinkNoise()">Розовый Шум</button>
+            <button class="opt-btn" id="modeFM" onclick="toggleFM()">FM-Модуляция</button>
+            <button class="opt-btn" id="modeJitter" onclick="toggleJitter()">Хаос Джиттер</button>
             <button class="opt-btn" id="modeUltra" onclick="activateUltrasonic()">Ультразвук</button>
             <button class="opt-btn" id="modeDust" onclick="activateAntiDust()">Анти-Пыль</button>
-            <button class="opt-btn" onclick="toggleOledSaver()">Выключить экран</button>
+            <button class="opt-btn" id="modeInfra" onclick="activateInfrasonic()">Инфра-Удар (25Hz)</button>
+            <button class="opt-btn" id="modeResonance" onclick="findResonance()">Тест Резонанса</button>
         </div>
 
-        <div class="section-title">Акустический тест</div>
+        <div class="section-title">Премиум Автоматизация</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:14px;">
+            <button class="time-btn" id="btnExpress" onclick="startExpressCombo()" style="background: rgba(255,255,255,0.06);">Экспресс Интенсив</button>
+            <button class="time-btn" id="btnNight" onclick="startNightDry()" style="background: rgba(255,255,255,0.06);">Ночная Деликатная</button>
+        </div>
+
+        <div class="section-title">Окружающая среда и Тест</div>
         <div class="mic-box">
-            <span>Шум извне (Микрофон):</span>
-            <span class="mic-db" id="micStatus" onclick="initMic()">Включить микрофон</span>
+            <span style="font-size: 12px; font-weight:600;">Фоновый шум (Микрофон):</span>
+            <span class="mic-db" id="micStatus" onclick="initMic()">Калибровать</span>
         </div>
 
-        <div class="section-title">Статистика системы</div>
-        <div class="stats">
-            <div class="card glass">
+        <div class="section-title">Управление Стеклом</div>
+        <div style="display:flex; gap:6px; margin-bottom:14px;">
+            <button class="time-btn" onclick="toggleGlassBlur()">Матовость: Переключить</button>
+            <button class="time-btn" onclick="toggleOledSaver()">OLED Эко-Сон</button>
+        </div>
+
+        <div class="section-title">Телеметрия Смартфона</div>
+        <div class="stats-grid-extended">
+            <div class="card-ext">
                 <h3 id="statPower">98%</h3>
-                <p>Gain уровень</p>
+                <p>Усиление</p>
             </div>
-            <div class="card glass">
+            <div class="card-ext">
                 <h3 id="statWaterTotal">0.00 мл</h3>
-                <p>Выбито воды</p>
+                <p>Удалено Н2О</p>
             </div>
-            <div class="card glass">
+            <div class="card-ext">
                 <h3 id="statSessions">0</h3>
-                <p>Сессий окончено</p>
+                <p>Сессии</p>
             </div>
         </div>
+        <div class="stats-grid-extended">
+            <div class="card-ext">
+                <h3 id="statTemp">36.2 °C</h3>
+                <p>Темп. катушки</p>
+            </div>
+            <div class="card-ext">
+                <h3 id="statEfficiency">0%</h3>
+                <p>Эффект КПД</p>
+            </div>
+            <div class="card-ext">
+                <h3 id="statHealth">100%</h3>
+                <p>Здоровье</p>
+            </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 14px;">Лог-Терминал Архитектуры</div>
+        <div class="logger-box" id="loggerTerminal">Система стабилизирована. Готова к работе.</div>
     </div>
 
     <div class="glass">
         <div class="section-title">Эксклюзивные Скины</div>
         <div class="skin-container">
             <div class="skin-grid">
-                <button class="skin-item active" onclick="switchTheme('water', this)">Синий океан</button>
-                <button class="skin-item" onclick="switchTheme('bass', this)">Фиолетовый неон</button>
-                <button class="skin-item" onclick="switchTheme('smart', this)">Зеленый эко</button>
+                <button class="skin-item active" onclick="switchTheme('water', this)">Синий Океан</button>
+                <button class="skin-item" onclick="switchTheme('bass', this)">Фиолетовый Неон</button>
+                <button class="skin-item" onclick="switchTheme('smart', this)">Зеленый Эко</button>
+                <button class="skin-item" onclick="switchTheme('cyber', this)">Киберпанк</button>
             </div>
             <div class="skin-grid" style="margin-top: 6px;">
-                <button class="skin-item" onclick="switchTheme('cyber', this)">Киберпанк</button>
                 <button class="skin-item" onclick="switchTheme('volcano', this)">Вулкан</button>
+                <button class="skin-item" onclick="switchTheme('space', this)">Космос</button>
+                <button class="skin-item" onclick="switchTheme('gold', this)">Плазма</button>
+                <button class="skin-item" onclick="resetEngineSystem()" style="color: #ff453a;">Сброс</button>
             </div>
         </div>
-        <div class="developer-signature">Разработчик EGORKIN • v2.2 Fixed Floating Island</div>
+        <div class="developer-signature">Разработчик EGORKIN • v3.0 Engine Multi-Stage Stable</div>
     </div>
 </div>
 
 <script>
+/* БЛОК ИНИЦИАЛИЗАЦИИ И РАБОТЫ TELEGRAM WEBAPP */
 let tg = null;
 try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; if (tg.expand) tg.expand(); } } catch(e){}
 
 function triggerHaptic(style) {
     try {
         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light');
-        else if (navigator.vibrate) navigator.vibrate(style === 'heavy' ? [40] : [15]);
+        else if (navigator.vibrate) navigator.vibrate(style === 'heavy' ? [45] : [15]);
     } catch(e){}
 }
 
 function showToast(msg) {
-    const t = document.getElementById('appToast');
-    t.innerText = msg; 
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    const t = document.getElementById('appToast'); t.innerText = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-/* СИСТЕМНЫЕ ПЕРЕМЕННЫЕ */
-let audioCtx = null;
-let oscillator = null;
-let gainNode = null;
-let pannerNode = null; 
-let noiseNode = null;   
+function logToTerminal(text) {
+    const box = document.getElementById('loggerTerminal');
+    box.innerHTML += `<br>> ${text}`;
+    box.scrollTop = box.scrollHeight;
+}
 
-let playing = false;
-let isTurbo = false;
-let currentMode = 'water';
-let selectedWaveform = 'sine'; 
-let panValue = 0; 
-let timerInterval;
-let timeLeft = 120;
-let waterEjected = 0.0; 
-let completedSessions = 0; 
+/* ГЛОБАЛЬНЫЕ ИНЖЕНЕРНЫЕ ПЕРЕМЕННЫЕ ДВИЖКА AUDIO */
+let audioCtx = null, oscillator = null, gainNode = null, pannerNode = null, noiseNode = null;
+let fmOsc = null, fmGain = null; // Переменные FM модуляции
 
-let isSweepActive = false; 
-let isPulseActive = false; 
-let isNoiseActive = false; 
-let pulseInterval = null;
+let playing = false, isTurbo = false, currentMode = 'water';
+let selectedWaveform = 'sine', panValue = 0, timerInterval = null, timeLeft = 120;
+let waterEjected = 0.0, completedSessions = 0, coilTemp = 36.2;
 
-/* Настройки только для звуковых режимов */
+let isSweepActive = false, isPulseActive = false, isNoiseActive = false, isPinkActive = false;
+let isFMActive = false, isJitterActive = false, isExpressCombo = false, isMeshProtect = false;
+let pulseInterval = null, jitterInterval = null, sweepDirection = 1;
+
 const modeSettings = {
-    water: { minF: 100, maxF: 250, type: 'sine', label: 'Вода' },
-    bass:  { minF: 30,  maxF: 100, type: 'triangle', label: 'Бас' },
-    smart: { minF: 50,  maxF: 300, type: 'sawtooth', label: 'Умный' }
+    water: { minF: 100, maxF: 260, type: 'sine', label: 'Вода' },
+    bass:  { minF: 35,  maxF: 95,  type: 'triangle', label: 'Бас' },
+    smart: { minF: 60,  maxF: 450, type: 'sawtooth', label: 'Умный' }
 };
 
 const slider = document.getElementById('slider');
@@ -505,36 +445,76 @@ const islandModeName = document.getElementById('islandModeName');
 const statPower = document.getElementById('statPower');
 const island = document.getElementById('island');
 
+/* АВТОСОХРАНЕНИЕ: ПРОВЕРКА LOCALSTORAGE */
+if(localStorage.getItem('savedFreq')) {
+    let saved = localStorage.getItem('savedFreq');
+    slider.value = saved; freqText.innerText = saved + ' Гц';
+}
+
+/* СИНТЕЗАТОР АППАРАТНЫХ UI КЛИКОВ (Web Audio API интерфейсные клики) */
+function playUiClick() {
+    try {
+        let ctxClick = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = ctxClick.createOscillator();
+        let g = ctxClick.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctxClick.currentTime);
+        g.gain.setValueAtTime(0.04, ctxClick.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctxClick.currentTime + 0.04);
+        osc.connect(g); g.connect(ctxClick.destination); osc.start(); osc.stop(ctxClick.currentTime + 0.05);
+    } catch(e){}
+}
+
+/* СЛУШАТЕЛИ ВРЕМЕНИ СЕССИИ */
 document.getElementById('btnMinusTime').addEventListener('click', () => {
-    if (timeLeft > 30) { timeLeft -= 30; updateTimerUI(); triggerHaptic('light'); }
+    playUiClick(); if (timeLeft > 30) { timeLeft -= 30; updateTimerUI(); triggerHaptic('light'); }
 });
 document.getElementById('btnPlusTime').addEventListener('click', () => {
-    timeLeft += 30; updateTimerUI(); triggerHaptic('light');
+    playUiClick(); timeLeft += 30; updateTimerUI(); triggerHaptic('light');
 });
 
 function setPresetFreq(hz) {
-    slider.value = hz;
-    updateSliderUI(hz);
-    if (oscillator && playing) oscillator.frequency.value = hz;
-    triggerHaptic('medium');
+    playUiClick(); slider.value = hz; updateSliderUI(hz);
+    if (oscillator && playing) oscillator.frequency.setValueAtTime(hz, audioCtx.currentTime);
+    autoSelectModeByFreq(hz); triggerHaptic('medium');
 }
 function setPresetTime(sec) {
-    timeLeft = sec;
-    updateTimerUI();
-    triggerHaptic('medium');
+    playUiClick(); timeLeft = sec; updateTimerUI(); triggerHaptic('medium');
 }
 
+/* УМНОЕ ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПРИ ДВИЖЕНИИ СЛАЙДЕРА */
+function autoSelectModeByFreq(hz) {
+    let targetMode = 'smart';
+    if(hz >= 35 && hz <= 95) targetMode = 'bass';
+    else if(hz > 95 && hz <= 260) targetMode = 'water';
+    
+    if(currentMode !== targetMode) {
+        document.querySelectorAll('.mode').forEach(m => {
+            m.classList.toggle('active', m.getAttribute('data-mode') === targetMode);
+        });
+        currentMode = targetMode;
+        islandModeName.innerText = modeSettings[targetMode].label;
+        logToTerminal(`Автовыбор алгоритма: ${modeSettings[targetMode].label}`);
+    }
+}
+
+slider.addEventListener('input', () => {
+    let val = Number(slider.value);
+    updateSliderUI(val);
+    if(oscillator && playing) oscillator.frequency.setValueAtTime(val, audioCtx.currentTime);
+    autoSelectModeByFreq(val);
+    localStorage.setItem('savedFreq', val);
+});
+
 function setWaveform(w) {
-    selectedWaveform = w;
+    playUiClick(); selectedWaveform = w;
     document.querySelectorAll('[id^="wave_"]').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById('wave_' + w);
-    if (btn) btn.classList.add('active');
+    const btn = document.getElementById('wave_' + w); if (btn) btn.classList.add('active');
     if (oscillator) oscillator.type = w;
-    triggerHaptic('light');
+    logToTerminal(`Форма волны изменена на: ${w}`); triggerHaptic('light');
 }
 
 function setChannel(val) {
-    panValue = val;
+    playUiClick(); panValue = val;
     document.getElementById('chan_center').classList.remove('active');
     document.getElementById('chan_left').classList.remove('active');
     document.getElementById('chan_right').classList.remove('active');
@@ -545,62 +525,104 @@ function setChannel(val) {
     triggerHaptic('light');
 }
 
-function toggleSweep() {
-    isSweepActive = !isSweepActive;
-    document.getElementById('modeSweep').classList.toggle('active', isSweepActive);
-    triggerHaptic('medium');
+/* МОДУЛЯЦИИ И ИНЖЕНЕРНЫЕ СИСТЕМЫ */
+function toggleSweep() { playUiClick(); isSweepActive = !isSweepActive; document.getElementById('modeSweep').classList.toggle('active', isSweepActive); logToTerminal(`Частотный свип: ${isSweepActive}`); }
+function togglePulse() { 
+    playUiClick(); isPulseActive = !isPulseActive; document.getElementById('modePulse').classList.toggle('active', isPulseActive); 
+    if (!isPulseActive && gainNode && playing) gainNode.gain.setValueAtTime(isTurbo ? 0.75 : 0.45, audioCtx.currentTime);
+    logToTerminal(`Импульсный режим: ${isPulseActive}`);
+}
+function toggleNoise() { playUiClick(); isNoiseActive = !isNoiseActive; isPinkActive = false; document.getElementById('modeNoise').classList.toggle('active', isNoiseActive); document.getElementById('modePink').classList.remove('active'); if (playing) { stopAudio(); startAudio(); } }
+function togglePinkNoise() { playUiClick(); isPinkActive = !isPinkActive; isNoiseActive = false; document.getElementById('modePink').classList.toggle('active', isPinkActive); document.getElementById('modeNoise').classList.remove('active'); if (playing) { stopAudio(); startAudio(); } }
+
+function toggleFM() {
+    playUiClick(); isFMActive = !isFMActive; document.getElementById('modeFM').classList.toggle('active', isFMActive);
+    if(playing) { stopAudio(); startAudio(); }
+    logToTerminal(`FM Модуляция (15 Гц): ${isFMActive}`);
 }
 
-function togglePulse() {
-    isPulseActive = !isPulseActive;
-    document.getElementById('modePulse').classList.toggle('active', isPulseActive);
-    triggerHaptic('medium');
-    if (!isPulseActive && gainNode && playing) {
-        gainNode.gain.setValueAtTime(isTurbo ? 0.6 : 0.35, audioCtx.currentTime);
-    }
+function toggleJitter() {
+    playUiClick(); isJitterActive = !isJitterActive; document.getElementById('modeJitter').classList.toggle('active', isJitterActive);
+    if(!isJitterActive) clearInterval(jitterInterval);
+    else if(playing) startJitterEngine();
+    logToTerminal(`Хаотичный джиттер: ${isJitterActive}`);
 }
 
-function toggleNoise() {
-    isNoiseActive = !isNoiseActive;
-    document.getElementById('modeNoise').classList.toggle('active', isNoiseActive);
-    triggerHaptic('heavy');
-    if (playing) { stopAudio(); startAudio(); }
+function startJitterEngine() {
+    clearInterval(jitterInterval);
+    jitterInterval = setInterval(() => {
+        if(playing) {
+            let rndHz = Math.floor(Math.random() * 300) + 40;
+            slider.value = rndHz; updateSliderUI(rndHz);
+            if(oscillator) oscillator.frequency.setValueAtTime(rndHz, audioCtx.currentTime);
+        }
+    }, 80);
 }
 
-function activateUltrasonic() {
-    isNoiseActive = false; document.getElementById('modeNoise').classList.remove('active');
-    setWaveform('sine');
-    setPresetFreq(16500);
-    showToast('Запущен Ультразвук 16.5 кГц');
+function activateUltrasonic() { playUiClick(); disableAllExtraModulations(); setWaveform('sine'); setPresetFreq(17000); logToTerminal('Ультразвуковой осушитель активен'); showToast('Ультразвук 17 кГц'); }
+function activateAntiDust() { playUiClick(); disableAllExtraModulations(); setWaveform('square'); setPresetFreq(45); logToTerminal('Анти-Пыль режим запущен'); showToast('Удаление пыли 45 Гц'); }
+function activateInfrasonic() { playUiClick(); disableAllExtraModulations(); setWaveform('sine'); setPresetFreq(25); logToTerminal('Инфра-Удар 25 Гц запущен'); showToast('Инфра-Удар 25 Гц'); }
+
+function findResonance() {
+    playUiClick(); disableAllExtraModulations(); isSweepActive = true;
+    setPresetFreq(30); timeLeft = 15; updateTimerUI();
+    logToTerminal('Поиск точки резонанса запущен');
+    if(!playing) orb.click();
 }
 
-function activateAntiDust() {
-    isNoiseActive = false; document.getElementById('modeNoise').classList.remove('active');
-    setWaveform('square');
-    setPresetFreq(45);
-    showToast('Режим удаления пыли запущен');
+function disableAllExtraModulations() {
+    isSweepActive = false; isPulseActive = false; isNoiseActive = false; isPinkActive = false; isFMActive = false; isJitterActive = false;
+    document.querySelectorAll('.opt-btn').forEach(b => { if(!b.id.startsWith('wave_')) b.classList.remove('active'); });
+    clearInterval(jitterInterval);
+}
+
+function toggleGlassBlur() {
+    playUiClick();
+    let currentBlur = getComputedStyle(document.documentElement).getPropertyValue('--blur-radius').trim();
+    let newBlur = currentBlur === '30px' ? '0px' : '30px';
+    document.documentElement.style.setProperty('--blur-radius', newBlur);
+    logToTerminal(`Инверсия жидкого стекла: ${newBlur}`);
 }
 
 function toggleOledSaver() {
     if(!playing) { showToast('Сначала запустите процесс!'); return; }
     document.getElementById('oledSaver').style.display = 'flex';
 }
-document.getElementById('oledSaver').addEventListener('click', () => {
-    document.getElementById('oledSaver').style.display = 'none';
-});
+document.getElementById('oledSaver').addEventListener('click', () => { document.getElementById('oledSaver').style.display = 'none'; });
 
 /* ТУРБО БУСТЕР */
 document.getElementById('turboToggle').addEventListener('click', () => {
-    isTurbo = !isTurbo;
-    document.getElementById('turboToggle').classList.toggle('active', isTurbo);
+    isTurbo = !isTurbo; document.getElementById('turboToggle').classList.toggle('active', isTurbo);
     statPower.innerText = isTurbo ? 'BOOST 200%' : '98%';
+    document.getElementById('clipLed').classList.toggle('clipping', isTurbo);
     triggerHaptic('heavy');
-    if (gainNode && playing) {
-        gainNode.gain.setValueAtTime(isTurbo ? 0.6 : 0.35, audioCtx.currentTime);
-    }
+    if (gainNode && playing) gainNode.gain.setValueAtTime(isTurbo ? 0.75 : 0.45, audioCtx.currentTime);
+    logToTerminal(`Турбо Буст 200%: ${isTurbo}`);
 });
 
-/* УПРАВЛЕНИЕ АУДИОПОТОКОМ */
+/* РОЗОВЫЙ ШУМ ГЕНЕРАТОР (МАТЕМАТИЧЕСКАЯ ФИЛЬТРАЦИЯ SPECTRUM 1/F) */
+function createPinkNoiseBuffer(audioCtx) {
+    let bufferSize = 2 * audioCtx.sampleRate,
+        noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
+        output = noiseBuffer.getChannelData(0);
+    let b0, b1, b2, b3, b4, b5, b6;
+    b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+    for (let i = 0; i < bufferSize; i++) {
+        let white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11; // Балансировка громкости
+        b6 = white * 0.115926;
+    }
+    return noiseBuffer;
+}
+
+/* ЗАПУСК ЗВУКОВОГО ДВИЖКА */
 function startAudio() {
     let AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!audioCtx) audioCtx = new AudioContextClass();
@@ -610,102 +632,157 @@ function startAudio() {
     pannerNode = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
 
     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-    let targetVolume = isTurbo ? 0.6 : 0.35;
+    let targetVolume = isTurbo ? 0.75 : 0.45;
 
-    if (isNoiseActive) {
-        let bufferSize = 2 * audioCtx.sampleRate,
-            noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
-            output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
-        }
+    if (isNoiseActive || isPinkActive) {
         noiseNode = audioCtx.createBufferSource();
-        noiseNode.buffer = noiseBuffer;
+        if (isPinkActive) {
+            noiseNode.buffer = createPinkNoiseBuffer(audioCtx);
+        } else {
+            let bufferSize = 2 * audioCtx.sampleRate,
+                whiteBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
+                out = whiteBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) out[i] = Math.random() * 2 - 1;
+            noiseNode.buffer = whiteBuffer;
+        }
         noiseNode.loop = true;
-        
         if(pannerNode) { noiseNode.connect(pannerNode); pannerNode.connect(gainNode); }
-        else { noiseNode.connect(gainNode); }
+        else noiseNode.connect(gainNode);
         noiseNode.start();
     } else {
         oscillator = audioCtx.createOscillator();
         oscillator.type = selectedWaveform;
         oscillator.frequency.value = Number(slider.value);
-        
+
+        /* ИНИЦИАЛИЗАЦИЯ FM МОДУЛЯЦИИ */
+        if (isFMActive) {
+            fmOsc = audioCtx.createOscillator();
+            fmGain = audioCtx.createGain();
+            fmOsc.frequency.value = 15; // Частота качания 15 Гц
+            fmGain.gain.value = 40; // Девиация частоты в пределах 40 Гц
+            fmOsc.connect(fmGain);
+            fmGain.connect(oscillator.frequency);
+            fmOsc.start();
+        }
+
         if(pannerNode) { oscillator.connect(pannerNode); pannerNode.connect(gainNode); }
-        else { oscillator.connect(gainNode); }
+        else oscillator.connect(gainNode);
         oscillator.start();
     }
 
     gainNode.connect(audioCtx.destination);
-    gainNode.gain.linearRampToValueAtTime(targetVolume, audioCtx.currentTime + 0.2);
+    // Функция 2: Плавный старт (Fade-in)
+    gainNode.gain.linearRampToValueAtTime(targetVolume, audioCtx.currentTime + 0.25);
 
     if (pannerNode) pannerNode.pan.setValueAtTime(panValue, audioCtx.currentTime);
 
     if (isPulseActive) {
-        let state = true;
+        let pulseState = true;
         pulseInterval = setInterval(() => {
             if(gainNode) {
-                gainNode.gain.setValueAtTime(state ? targetVolume : 0.01, audioCtx.currentTime);
-                state = !state;
+                gainNode.gain.setValueAtTime(pulseState ? targetVolume : 0.02, audioCtx.currentTime);
+                pulseState = !pulseState;
             }
-        }, 150);
+        }, 120);
     }
 }
 
 function stopAudio() {
     clearInterval(pulseInterval);
-    if (oscillator) { try{ oscillator.stop(); oscillator.disconnect(); }catch(e){} oscillator = null; }
-    if (noiseNode) { try{ noiseNode.stop(); noiseNode.disconnect(); }catch(e){} noiseNode = null; }
-    if (gainNode) { try{ gainNode.disconnect(); }catch(e){} gainNode = null; }
+    if(gainNode) {
+        // Функция 3: Плавный стоп (Fade-out)
+        try { gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15); } catch(e){}
+    }
+    setTimeout(() => {
+        if (oscillator) { try{ oscillator.stop(); oscillator.disconnect(); }catch(e){} oscillator = null; }
+        if (noiseNode) { try{ noiseNode.stop(); noiseNode.disconnect(); }catch(e){} noiseNode = null; }
+        if (fmOsc) { try{ fmOsc.stop(); fmOsc.disconnect(); }catch(e){} fmOsc = null; }
+        if (gainNode) { try{ gainNode.disconnect(); }catch(e){} gainNode = null; }
+    }, 160);
+}
+
+/* ПРЕМИУМ АВТОМАТИЗАЦИЯ СЕССИЙ */
+function startExpressCombo() {
+    playUiClick(); isExpressCombo = true; disableAllExtraModulations();
+    currentMode = 'water'; setWaveform('sine'); setPresetFreq(140);
+    timeLeft = 60; updateTimerUI(); logToTerminal('Запущен Экспресс Интенсив (Вода+Бас)');
+    if(!playing) orb.click();
+}
+
+function startNightDry() {
+    playUiClick(); disableAllExtraModulations(); setWaveform('sine');
+    setPresetFreq(350); timeLeft = 900; updateTimerUI();
+    logToTerminal('Режим: Ночная тихая сушка катушки');
+    toggleOledSaver();
+    if(!playing) orb.click();
 }
 
 function updateTimerUI() {
     let f = formatTime(timeLeft);
-    timerDisplay.innerText = f;
-    mainTimeDisplay.innerText = f;
+    timerDisplay.innerText = f; mainTimeDisplay.innerText = f;
     document.getElementById('saverTimer').innerText = f;
+    document.getElementById('etaDisplay').innerText = `ETA: ~${f}`;
 }
 
 function stopProcess() {
-    stopAudio();
-    clearInterval(timerInterval);
-    playing = false;
-    orb.classList.remove('active');
-    buttonText.innerText = 'СТАРТ';
+    stopAudio(); clearInterval(timerInterval);
+    playing = false; isExpressCombo = false;
+    orb.className = "orb"; buttonText.innerText = 'СТАРТ';
     document.getElementById('islandDot').classList.remove('active');
     document.getElementById('oledSaver').style.display = 'none';
 
     if (timeLeft <= 0) {
         completedSessions++;
         document.getElementById('statSessions').innerText = completedSessions;
-        timeLeft = 120; 
-        updateTimerUI();
+        timeLeft = 120; updateTimerUI();
         showToast('Очистка завершена успешно!');
+        logToTerminal('Сессия успешно завершена. Резонанс стабилен.');
+        
+        let currentHealth = parseInt(document.getElementById('statHealth').innerText);
+        if(currentHealth > 85) document.getElementById('statHealth').innerText = (currentHealth - 1) + '%';
+    } else {
+        logToTerminal('Процесс прерван пользователем.');
     }
+    document.getElementById('statEfficiency').innerText = '0%';
 }
 
+/* ОБРАБОТЧИК КЛИКА ОРБА */
 orb.addEventListener('click', () => {
     triggerHaptic('heavy');
     if (!playing) {
-        playing = true;
-        startAudio();
-        orb.classList.add('active');
+        playing = true; startAudio();
+        if (currentMode === 'bass') orb.classList.add('shake-heavy');
+        else orb.classList.add('active');
         buttonText.innerText = 'СТОП';
         document.getElementById('islandDot').classList.add('active');
-        showToast('Очистка запущена! Прибавьте громкость!');
+        logToTerminal(`Запуск генератора на частоте ${slider.value} Гц`);
+        
+        if(isJitterActive) startJitterEngine();
 
         timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerUI();
+            timeLeft--; updateTimerUI();
             
             if(playing) {
-                let multiplier = isTurbo ? 0.014 : 0.007;
-                waterEjected += Math.random() * multiplier;
-                let dataStr = waterEjected.toFixed(2) + ' мл';
-                document.getElementById('islandWaterOut').innerText = dataStr;
-                document.getElementById('statWaterTotal').innerText = dataStr;
-            }
+                // Математическая симуляция телеметрии в реальном времени
+                let k = isTurbo ? 2.2 : 1.0;
+                waterEjected += (Math.random() * 0.012) * k;
+                let waterStr = waterEjected.toFixed(2) + ' мл';
+                document.getElementById('islandWaterOut').innerText = waterStr;
+                document.getElementById('statWaterTotal').innerText = waterStr;
 
+                coilTemp += (isTurbo ? 0.12 : 0.03);
+                document.getElementById('statTemp').innerText = coilTemp.toFixed(1) + ' °C';
+
+                let eff = Math.min(99, Math.floor((waterEjected * 45) + (isTurbo ? 20 : 0)));
+                document.getElementById('statEfficiency').innerText = eff + '%';
+
+                if(isExpressCombo && timeLeft === 30) {
+                    currentMode = 'bass'; setWaveform('triangle'); setPresetFreq(55);
+                    logToTerminal('Экспресс Шаг 2: Переключение на глубокий Бас');
+                }
+
+                if(currentMode === 'bass') triggerHaptic('light');
+            }
             if (timeLeft <= 0) stopProcess();
         }, 1000);
     } else {
@@ -713,109 +790,142 @@ orb.addEventListener('click', () => {
     }
 });
 
-/* ИСПРАВЛЕННЫЙ СЕЛЕКТОР ЗВУКОВЫХ РЕЖИМОВ */
+/* СЕЛЕКТОР ЗВУКОВЫХ РЕЖИМОВ */
 document.querySelectorAll('.mode').forEach(element => {
     element.addEventListener('click', function() {
         document.querySelectorAll('.mode').forEach(m => m.classList.remove('active'));
         this.classList.add('active');
+        currentMode = this.getAttribute('data-mode');
         
-        let mode = this.getAttribute('data-mode');
-        currentMode = mode;
-        
-        let sett = modeSettings[mode];
+        let sett = modeSettings[currentMode];
         islandModeName.innerText = sett.label;
         setWaveform(sett.type);
         setPresetFreq((sett.minF + sett.maxF)/2);
-        triggerHaptic('medium');
+        
+        if (playing) {
+            orb.className = "orb";
+            if (currentMode === 'bass') orb.classList.add('shake-heavy');
+            else orb.classList.add('active');
+        }
     });
 });
 
-/* ПОЛНОСТЬЮ АВТОНОМНЫЙ СЕЛЕКТОР ТЕМ (СКИНОВ) - ИСКЛЮЧИТЕЛЬНО ДЛЯ ЦВЕТА */
-function switchTheme(themeClassName, btnElement) {
-    document.body.className = themeClassName;
+/* СЕЛЕКТОР ТЕМ КЛАССОВ (ТОЛЬКО ВИЗУАЛЬНАЯ ПЕРЕКРАСКА) */
+function switchTheme(className, btn) {
+    document.body.className = className;
     document.querySelectorAll('.skin-item').forEach(b => b.classList.remove('active'));
-    btnElement.classList.add('active');
+    btn.classList.add('active');
+    logToTerminal(`Скин оформления изменен на: ${className}`);
     triggerHaptic('medium');
 }
 
-/* ТЕСТ МИКРОФОНА */
+/* СБРОС СИСТЕМЫ И ОТКАТ СЕТТИНГОВ */
+function resetEngineSystem() {
+    playUiClick(); disableAllExtraModulations();
+    if(playing) stopProcess();
+    slider.value = 165; updateSliderUI(165);
+    localStorage.removeItem('savedFreq');
+    document.body.className = 'water';
+    document.querySelectorAll('.skin-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.skin-item')[0].classList.add('active');
+    logToTerminal('Ядро сброшено до заводских параметров: 165 Гц');
+    showToast('Параметры сброшены');
+}
+
+/* СИСТЕМА КАЛИБРОВКИ МИКРОФОНА */
 let micStream = null;
 function initMic() {
-    if(micStream) return;
+    playUiClick(); if(micStream) return;
+    document.getElementById('micStatus').innerText = 'Замер...';
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     .then(stream => {
         micStream = stream;
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const analyser = audioContext.createAnalyser();
         const source = audioContext.createMediaStreamSource(stream);
-        source.connect(analyser);
-        analyser.fftSize = 256;
+        source.connect(analyser); analyser.fftSize = 128;
         const bufferLength = analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         
         function checkVol() {
-            if(!micStream) return;
-            requestAnimationFrame(checkVol);
+            if(!micStream) return; requestAnimationFrame(checkVol);
             analyser.getByteFrequencyData(dataArray);
-            let sum = 0;
-            for(let i=0; i<bufferLength; i++) sum += dataArray[i];
+            let sum = 0; for(let i=0; i<bufferLength; i++) sum += dataArray[i];
             let avg = sum / bufferLength;
-            document.getElementById('micStatus').innerText = Math.round(avg) + ' дБ (Активен)';
+            document.getElementById('micStatus').innerText = Math.round(avg/2 + 25) + ' дБ (Норма)';
         }
-        checkVol();
-    }).catch(err => {
-        document.getElementById('micStatus').innerText = 'Ошибка доступа';
-    });
+        checkVol(); logToTerminal('Микрофон откалиброван.');
+    }).catch(() => { document.getElementById('micStatus').innerText = 'Отказ'; });
 }
 
-/* РАБОТА СВИПА */
+/* ЦИКЛ ДВУНАПРАВЛЕННОГО СВИПА */
 setInterval(() => {
-    if (playing && isSweepActive && !isNoiseActive) {
-        let s = modeSettings[currentMode] || {maxF: 300, minF: 50};
+    if (playing && isSweepActive && !isNoiseActive && !isPinkActive) {
+        let s = modeSettings[currentMode] || {maxF: 400, minF: 60};
         let currentHz = Number(slider.value);
-        currentHz += 3;
-        if(currentHz > s.maxF) currentHz = s.minF;
-        slider.value = currentHz;
-        updateSliderUI(currentHz);
-        if(oscillator) oscillator.frequency.value = currentHz;
+        currentHz += (2 * sweepDirection);
+        if(currentHz >= s.maxF) sweepDirection = -1;
+        if(currentHz <= s.minF) sweepDirection = 1;
+        slider.value = currentHz; updateSliderUI(currentHz);
+        if(oscillator) oscillator.frequency.setValueAtTime(currentHz, audioCtx.currentTime);
     }
-}, 40);
+}, 30);
 
-function formatTime(s) {
-    return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0');
-}
-function updateSliderUI(v) {
-    freqText.innerText = Math.floor(v) + ' Гц';
-}
-slider.addEventListener('input', () => {
-    updateSliderUI(slider.value);
-    if(oscillator && playing) oscillator.frequency.value = Number(slider.value);
+/* АВТОПАУЗА ПРИ СВЕРТЫВАНИИ ВКЛАДКИ В ТГ / БРАУЗЕРЕ */
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && playing) { stopProcess(); logToTerminal('Пауза: Приложение свернуто.'); }
 });
 
-/* ИНТЕРФЕЙС ОСТРОВКА */
+function formatTime(s) { return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0'); }
+function updateSliderUI(v) { freqText.innerText = Math.floor(v) + ' Гц'; }
+
+/* ДИНАМИЧЕСКИЙ ИНТЕРФЕЙС ОСТРОВКА */
 island.addEventListener('click', (e) => {
     if(e.target.closest('button')) return;
-    island.classList.toggle('expanded');
-    triggerHaptic('light');
+    island.classList.toggle('expanded'); triggerHaptic('light');
 });
-document.getElementById('islandStopBtn').addEventListener('click', () => {
-    stopProcess(); island.classList.remove('expanded');
-});
+document.getElementById('islandStopBtn').addEventListener('click', () => { stopProcess(); island.classList.remove('expanded'); });
 
-/* АНИМАЦИЯ ЭКВАЛАЙЗЕРА */
-const canvas = document.getElementById('visualizer');
-const ctx = canvas.getContext('2d');
-function resVis() { canvas.width = canvas.parentElement.clientWidth; canvas.height = 50; }
+/* РЕНДЕРИНГ ЭКВАЛАЙЗЕРА И ФИЗИКИ ВОЛН */
+const canvas = document.getElementById('visualizer'); const ctx = canvas.getContext('2d');
+function resVis() { canvas.width = canvas.parentElement.clientWidth; canvas.height = 60; }
 resVis(); window.addEventListener('resize', resVis);
 
 function draw() {
-    requestAnimationFrame(draw);
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    let bars = 24, gap = 6, w = (canvas.width - (bars-1)*gap)/bars;
-    for(let i=0; i<bars; i++) {
-        let h = playing ? Math.sin(Date.now()/120 + i*0.4)*18 + 22 : 4;
-        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--accent');
-        ctx.beginPath(); ctx.roundRect(i*(w+gap), 25-h/2, w, h, 6); ctx.fill();
+    requestAnimationFrame(draw); ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let rgb = getComputedStyle(document.body).getPropertyValue('--accent-rgb').trim();
+    
+    if (!playing) {
+        ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.strokeStyle = `rgba(${rgb}, 0.2)`; ctx.lineWidth = 2; ctx.stroke(); return;
+    }
+
+    if (currentMode === 'water') {
+        ctx.beginPath(); ctx.moveTo(0, canvas.height);
+        let timeFactor = Date.now() * 0.012, amp = isTurbo ? 22 : 11;
+        for (let x = 0; x <= canvas.width; x++) {
+            let y = Math.sin(x * 0.02 + timeFactor) * amp + (canvas.height / 2);
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(canvas.width, canvas.height); ctx.closePath();
+        let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        grad.addColorStop(0, `rgba(${rgb}, 0.7)`); grad.addColorStop(1, `rgba(${rgb}, 0.02)`);
+        ctx.fillStyle = grad; ctx.fill();
+    } else if (currentMode === 'bass') {
+        let bars = 28, gap = 5, w = (canvas.width - (bars - 1) * gap) / bars, center = canvas.height / 2;
+        for (let i = 0; i < bars; i++) {
+            let h = Math.abs(Math.sin(Date.now() * 0.04 + i)) * (isTurbo ? 26 : 14) + 2;
+            ctx.fillStyle = `rgba(${rgb}, 0.85)`; ctx.beginPath();
+            ctx.roundRect(i * (w + gap), center - h, w, h * 2, 3); ctx.fill();
+        }
+    } else if (currentMode === 'smart') {
+        ctx.beginPath(); ctx.moveTo(0, canvas.height / 2);
+        let amp = isTurbo ? 24 : 12;
+        for (let x = 0; x <= canvas.width; x += 10) {
+            let y = (Math.cos(x * 0.06 + Date.now() * 0.01) * Math.sin(x * 0.02)) * amp + (canvas.height / 2);
+            ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `rgba(${rgb}, 0.9)`; ctx.lineWidth = 2.5; ctx.stroke();
     }
 }
 draw();
