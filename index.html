@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050816">
 
-    <title>ОЧИСТКА PRO</title>
+    <title>ОЧИСТКА PRO v2.2</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -43,31 +43,46 @@
             --sub: rgba(255,255,255,.55);
         }
 
-        /* ЦВЕТОВЫЕ ТЕМЫ */
+        /* ЦВЕТОВЫЕ ТЕМЫ (СКИНЫ) */
         body.water { --accent:#60a5fa; --accent2:#2563eb; --bg1:#050816; --bg2:#09111f; }
         body.bass { --accent:#a855f7; --accent2:#7c3aed; --bg1:#12081c; --bg2:#170f2c; }
         body.smart { --accent:#22c55e; --accent2:#16a34a; --bg1:#07130d; --bg2:#0f1d14; }
+        body.cyber { --accent:#f43f5e; --accent2:#d946ef; --bg1:#1e0523; --bg2:#0f0210; }
+        body.volcano { --accent:#f97316; --accent2:#ef4444; --bg1:#1c0a05; --bg2:#0f0502; }
 
         html, body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden; /* Строгий запрет прокрутки */
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
             background-color: #050816;
             font-family: 'Inter', sans-serif;
             color: white;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* ФИКСИРОВАННЫЙ ФОН */
+        /* ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
         .bg-fixed {
-            position: fixed; /* Добавлено позиционирование */
+            position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -2;
-            transition: background-color 1s ease;
-            background-image: 
-                radial-gradient(circle at top, var(--accent2) 0%, transparent 45%),
-                linear-gradient(180deg, var(--bg1), var(--bg2));
+            z-index: -3;
+            background: linear-gradient(-45deg, #050816, #0c152b, #160a2b, #07160d);
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .blur-layer {
+            position: fixed;
+            inset: 0;
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            z-index: -1;
+            background: rgba(5, 8, 22, 0.3);
         }
 
         .ambient {
@@ -75,919 +90,735 @@
             inset: 0;
             overflow: hidden;
             pointer-events: none;
-            z-index: -1;
+            z-index: -2;
         }
 
         .light {
             position: absolute;
-            width: 350px;
-            height: 350px;
+            width: 450px;
+            height: 450px;
             border-radius: 50%;
-            filter: blur(100px);
-            opacity: .16;
+            opacity: 0.35;
+            filter: blur(80px);
             transform: translateZ(0);
-            transition: background 1s ease;
-            animation: float 18s infinite ease-in-out;
+            animation: float 15s infinite ease-in-out;
         }
 
-        .light.one { background: var(--accent2); top: -100px; left: -100px; }
-        .light.two { background: var(--accent); right: -80px; bottom: -80px; animation-delay: 6s; }
+        .light.one { background: var(--accent2); top: -50px; left: -50px; }
+        .light.two { background: var(--accent); right: -50px; bottom: -50px; animation-delay: 5s; }
 
         @keyframes float {
-            0%, 100% { transform: translate(0,0) translateZ(0); }
-            50% { transform: translate(30px,-40px) translateZ(0); }
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(50px, 60px) scale(1.2); }
         }
 
-        #particles-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+        /* УВЕДОМЛЕНИЯ (TOAST) */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 14px 28px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 100000;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            opacity: 0;
             pointer-events: none;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        .toast-container.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
 
-        .app {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 0 15px 15px;
-            padding-bottom: env(safe-area-inset-bottom, 16px);
-        }
-
-        /* =========================
-           ИДЕАЛЬНЫЙ DYNAMIC ISLAND
-        ========================= */
+        /* ЖЕСТКАЯ ФИКСАЦИЯ ОСТРОВКА ДЛЯ СКРОЛЛА */
         .top-bar-container {
-            position: sticky;
-            top: 10px; /* Исправлена ошибка: было top: 10; */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
-            margin: 0 -20px;
-            padding: env(safe-area-inset-top, 20px) 16px 16px;
-            background: transparent;
+            padding: 10px 0;
             display: flex;
             justify-content: center;
+            pointer-events: none; /* Пропускает клики сквозь пустую область контейнера */
         }
 
-        .island-wrapper {
-            display: flex;
-            justify-content: center;
-            position: relative;
-            min-height: 44px;
-            width: 100%;
+        .island-wrapper { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            pointer-events: auto; /* Возвращает кликабельность самому островку */
         }
 
         .island {
-            width: 225px;
-            height: 44px;
-            border-radius: 40px;
-            background: #000000;
-            border: 1px solid rgba(255,255,255,0.05);
-            overflow: hidden;
-            transition: width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
-                        height 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
-                        border-radius 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
-                        transform 0.2s, box-shadow 0.4s;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            margin: 0 auto;
+            width: 225px; height: 44px; border-radius: 40px; background: #000000;
+            border: 1px solid rgba(255,255,255,0.05); overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; display: flex; flex-direction: column;
         }
-
-        .island:active { transform: scale(0.95); }
 
         .island.expanded {
-            width: 100vw;
-            max-width: 320px;
-            height: 160px;
-            border-radius: 36px;
-            background: rgba(10, 10, 15, 0.98);
-            border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+            width: 100%; max-width: 340px; height: 165px; border-radius: 32px;
+            background: rgba(5, 5, 10, 0.98); border: 1px solid rgba(255,255,255,0.15);
         }
 
-        .island-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            height: 44px;
-            min-height: 44px;
+        .island-header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 44px; min-height: 44px; }
+        .island-left { display: flex; align-items: center; gap: 10px; }
+        .island-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sub); transition: all 0.3s; }
+        .island-dot.active { background: var(--accent); box-shadow: 0 0 12px var(--accent); animation: pulse-dot 1.5s infinite; }
+        @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
+        .island-title { font-size: 14px; font-weight: 600; }
+        .island-timer { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; color: var(--sub); }
+        .island-timer.active { color: var(--accent); }
+        
+        .island-content { padding: 0 20px 20px; opacity: 0; transform: translateY(10px); transition: all 0.4s; pointer-events: none; display: flex; flex-direction: column; flex: 1; }
+        .island.expanded .island-content { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .island-info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .island-info-label { color: var(--sub); }
+        .island-btn { background: rgba(255, 69, 58, 0.15); border: 1px solid rgba(255, 69, 58, 0.3); border-radius: 14px; padding: 8px; width: 100%; font-size: 13px; font-weight: 700; color: #ff453a; margin-top: auto; }
+
+        /* КОНТЕЙНЕР ПРИЛОЖЕНИЯ */
+        .app {
+            position: relative;
+            z-index: 2;
             width: 100%;
-        }
-
-        .island-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .island-dot {
-            width: 8px; 
-            height: 8px;
-            border-radius: 50%;
-            background: var(--sub);
-            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
-        }
-
-        .island-dot.active {
-            background: var(--accent);
-            box-shadow: 0 0 12px var(--accent);
-            animation: pulse-dot 1.5s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.6; }
-        }
-
-        .island-title { 
-            font-size: 14px; 
-            font-weight: 600; 
-            letter-spacing: 0.3px;
-        }
-
-        .island-timer { 
-            font-variant-numeric: tabular-nums; 
-            font-weight: 700; 
-            font-size: 15px;
-            color: var(--sub);
-            transition: color 0.3s;
-        }
-
-        .island-timer.active {
-            color: var(--accent);
-        }
-
-        .island-content {
-            padding: 0 20px 20px;
-            opacity: 0;
-            transform: translateY(10px) scale(0.95);
-            transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
-            pointer-events: none;
+            max-width: 480px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            flex: 1;
+            padding: 0 16px 40px;
+            /* Отступ сверху увеличен, чтобы контент не заезжал под фиксированный островок */
+            padding-top: calc(75px + env(safe-area-inset-top, 10px));
         }
 
-        .island.expanded .island-content {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-            transition-delay: 0.1s;
-        }
-
-        .island-info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-
-        .island-info-label { color: var(--sub); }
-        .island-info-value { font-weight: 600; color: #fff; }
-
-        .island-btn {
-            background: rgba(255, 69, 58, 0.15);
-            border: 1px solid rgba(255, 69, 58, 0.3);
-            border-radius: 16px;
-            padding: 10px;
-            width: 100%;
-            font-size: 14px; 
-            font-weight: 700;
-            color: #ff453a;
-            transition: all 0.2s;
-            margin-top: auto;
-        }
-        .island-btn:active { 
-            background: rgba(255, 69, 58, 0.25);
-            transform: scale(0.97);
-        }
-
-        /* ЗАГОЛОВОК */
-        .header { margin-top: 10px; margin-bottom: 20px; text-align: center; }
-        .logo h1 { font-family: -apple-system, sans-serif; font-weight: 900; font-size: 36px; letter-spacing: -1px; text-transform: uppercase; }
-        .logo p { font-size: 13px; color: var(--sub); margin-top: 2px; }
-
-        /* ГЛАВНАЯ КАРТОЧКА */
+        /* КАРТОЧКИ СТЕКЛА */
         .glass {
             position: relative;
-            background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-            border: 1px solid rgba(255,255,255,.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 30px rgba(0,0,0,.3);
-            border-radius: 32px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255,255,255,.06);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,.25);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
 
-        .hero { padding: 24px 22px; margin-bottom: 16px; }
+        .header { margin: 15px 0; text-align: center; }
+        .logo h1 { font-weight: 900; font-size: 34px; letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo p { font-size: 13px; color: var(--sub); }
 
-        /* УПРАВЛЕНИЕ ВРЕМЕНЕМ НА ГЛАВНОМ ЭКРАНЕ */
-        .main-time-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            padding: 8px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .main-time-controls { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border-radius: 16px; padding: 6px; margin-bottom: 20px; }
+        .time-btn { background: rgba(255,255,255,0.06); padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: 0.2s; text-align: center; }
+        .time-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.12); }
+        .time-btn.active { background: var(--accent); color: #000; }
 
-        .time-btn {
-            background: rgba(255,255,255,0.08);
-            padding: 10px 20px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .time-btn:active {
-            background: rgba(255,255,255,0.15);
-            transform: scale(0.92);
-        }
-
-        .main-time-display {
-            font-size: 20px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            color: white;
-        }
-        .main-time-display.active {
-            color: var(--accent);
-        }
-
-        /* КНОПКА СТАРТ */
-        .orb-wrap { display: flex; justify-content: center; margin: 10px 0 30px; position: relative; }
-
+        /* ОРБ КНОПКА */
+        .orb-wrap { display: flex; justify-content: center; margin: 10px 0 25px; position: relative; }
         .orb {
-            position: relative;
-            width: 175px; height: 175px;
-            border-radius: 50%;
+            position: relative; width: 160px; height: 160px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.15), rgba(255,255,255,.02));
-            border: 1px solid rgba(255,255,255,.08);
-            box-shadow: inset 0 0 25px rgba(255,255,255,.03), 0 0 50px color-mix(in srgb, var(--accent) 25%, transparent);
-            transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 1s ease;
-            will-change: transform;
-            z-index: 10;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), rgba(255,255,255,.02));
+            border: 1px solid rgba(255,255,255,.1);
+            box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 20%, transparent);
+            transition: all 0.2s; z-index: 10;
         }
+        .orb.active { animation: breathe 1.5s infinite ease-in-out; border-color: var(--accent); }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        .orb h2 { font-size: 26px; font-weight: 800; }
 
-        .orb:active { transform: scale(0.95); }
-        .orb.active { animation: breathe 2s infinite ease-in-out; }
+        .visualizer { width: 100%; height: 50px; margin-bottom: 20px; }
 
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--sub); margin-bottom: 12px; margin-top: 10px; }
+        .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+        
+        .opt-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 16px; text-align: left; transition: 0.2s; }
+        .opt-btn.active { background: color-mix(in srgb, var(--accent) 15%, transparent); border-color: var(--accent); }
 
-        .orb::before { 
-            content: ''; position: absolute; width: 220px; height: 220px; 
-            border-radius: 50%; border: 1px dashed rgba(255,255,255,.1); 
-            pointer-events: none;
-        }
-
-        .orb-ripple {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 175px; height: 175px;
-            margin-top: -87.5px; margin-left: -87.5px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .orb.active ~ .orb-ripple.r1 { animation: pulse-ring 1.8s infinite cubic-bezier(0.215, 0.610, 0.355, 1); }
-        .orb.active ~ .orb-ripple.r2 { animation: pulse-ring 1.8s infinite cubic-bezier(0.215, 0.610, 0.355, 1); animation-delay: 0.9s; }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.9); opacity: 0; border-width: 3px; }
-            50% { opacity: 0.6; border-width: 1px; }
-            100% { transform: scale(2.2); opacity: 0; border-width: 0px; }
-        }
-
-        .orb h2 { font-size: 30px; letter-spacing: -1px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-
-        /* ВИЗУАЛИЗАТОР */
-        .visualizer { width: 100%; height: 60px; margin-bottom: 24px; pointer-events: none; display: block; margin-left: auto; margin-right: auto;}
-
-        /* ТУРБО И ПОЛЗУНОК */
-        .controls-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; color: var(--sub); }
-        .turbo-toggle {
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
-            background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
-        }
-        .turbo-toggle.active { background: color-mix(in srgb, var(--accent) 30%, transparent); color: white; border-color: var(--accent); }
-        .turbo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sub); }
-        .turbo-toggle.active .turbo-dot { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
-
-        .slider-wrapper { position: relative; width: 100%; height: 24px; display: flex; align-items: center; margin-bottom: 24px; }
-        .slider { 
-            -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 10px; 
-            background: linear-gradient(90deg, var(--accent) 50%, rgba(255,255,255,.08) 50%); outline: none; 
-        }
-        .slider::-webkit-slider-thumb { 
-            -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; 
-            background: white; box-shadow: 0 0 10px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s; 
-        }
-        .slider:active::-webkit-slider-thumb { transform: scale(1.2); }
-
-        /* КАРТОЧКИ РЕЖИМОВ */
-        .modes { display: flex; gap: 8px; margin-bottom: 16px; }
-        .mode { flex: 1; padding: 12px; border-radius: 20px; text-align: left; transition: transform .2s, background .3s, border .3s; }
-        .mode:active { transform: scale(0.94); }
-        .mode.active { background: rgba(255,255,255,.1); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 15%, transparent); }
-        .mode h4 { margin-bottom: 4px; font-size: 14px; font-weight: 600; }
-        .mode p { font-size: 11px; line-height: 1.3; color: var(--sub); }
-
-        /* СТАТИСТИКА */
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .card { padding: 12px 6px; border-radius: 18px; text-align: center; }
-        .card h3 { font-size: 16px; margin-bottom: 2px; font-weight: 700; transition: color 0.5s ease; }
-        .card p { font-size: 11px; color: var(--sub); }
-
-        /* НИЖНЕЕ МЕНЮ */
-        .bottom-section { margin-top: auto; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
-        .dock { display: flex; gap: 8px; padding: 8px; border-radius: 28px; width: 100%; }
-        .dock-item { flex: 1; height: 46px; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: 600; color: rgba(255,255,255,.5); transition: all .3s ease; }
-        .dock-item:active { transform: scale(0.92); }
-        .dock-item.active { color: white; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.05); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 15%, transparent); }
-
-        .developer-signature { font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 16px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-        .homebar { width: 110px; height: 4px; border-radius: 30px; background: rgba(255,255,255,.2); margin: 12px auto 8px; }
-
-        /* ВСПЫШКА */
-        .flash { position: fixed; inset: 0; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 75%); pointer-events: none; opacity: 0; z-index: 100; transition: background 0.5s ease;}
-        .flash.active { animation: flash .6s ease; }
-        @keyframes flash { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
-
-        /* СТИЛИ УВЕДОМЛЕНИЙ (TOAST) */
-        .toast-container {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 25, 0.95);
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 24px;
+        /* ВЫДЕЛЕННАЯ КНОПКА ТУРБО */
+        .turbo-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 14px;
+            border-radius: 16px;
+            font-weight: 800;
             font-size: 14px;
-            font-weight: 600;
-            z-index: 9999;
-            transition: top 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-            backdrop-filter: blur(10px);
-            pointer-events: none;
-            white-space: nowrap;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            transition: 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+            color: var(--sub);
         }
-        .toast-container.show {
-            top: 60px;
+        .turbo-btn.active {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            border-color: #ff453a;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
         }
+
+        .slider-wrapper { margin-bottom: 20px; }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px; background: rgba(255,255,255,0.1); outline: none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: white; cursor: pointer; }
+
+        /* РЕЖИМЫ РАБОТЫ (ТОЛЬКО АУДИО АЛГОРИТМЫ) */
+        .modes { display: flex; gap: 8px; margin-bottom: 16px; }
+        .mode { flex: 1; padding: 12px; border-radius: 16px; text-align: center; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255,255,255,0.06); }
+        .mode.active { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid var(--accent); }
+        .mode h4 { font-size: 13px; margin-bottom: 2px; } .mode p { font-size: 10px; color: var(--sub); }
+
+        .mic-box { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 16px; margin-bottom: 16px; }
+        .mic-db { font-weight: 700; color: var(--accent); }
+
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .card { padding: 10px; border-radius: 14px; text-align: center; }
+        .card h3 { font-size: 15px; } .card p { font-size: 10px; color: var(--sub); }
+
+        /* ИЗОЛИРОВАННЫЙ БЛОК ДЛЯ ВИЗУАЛЬНЫХ СКИНОВ */
+        .skin-container { display: flex; flex-direction: column; gap: 6px; padding: 6px; border-radius: 20px; background: rgba(0,0,0,0.2); }
+        .skin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .skin-item { height: 40px; border-radius: 12px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
+        .skin-item.active { color: white; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); }
+
+        /* ЭКО-ЭКРАН */
+        #oledSaver { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+        #oledSaver p { color: #333; font-size: 12px; margin-top: 20px; }
+
+        .developer-signature { font-size: 9px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 15px; letter-spacing: 1px; }
     </style>
 </head>
 <body class="water">
 
 <div class="bg-fixed"></div>
-<div class="flash" id="flash"></div>
-
+<div class="blur-layer"></div>
 <div class="toast-container" id="appToast">Уведомление</div>
+
+<div id="oledSaver">
+    <div class="island-timer active" id="saverTimer" style="font-size: 48px;">02:00</div>
+    <p>Тапните по экрану для выхода из режима энергосбережения</p>
+</div>
 
 <div class="ambient">
     <div class="light one"></div>
     <div class="light two"></div>
-    <canvas id="particles-canvas"></canvas>
 </div>
 
-<div class="app">
-    
-    <div class="top-bar-container">
-        <div class="island-wrapper">
-            <div class="island" id="island">
-                <div class="island-header">
-                    <div class="island-left">
-                        <div class="island-dot" id="islandDot"></div>
-                        <span class="island-title" id="islandTitle">Очистка</span>
-                    </div>
-                    <span class="island-timer" id="timerDisplay">02:00</span>
+<div class="top-bar-container">
+    <div class="island-wrapper">
+        <div class="island" id="island">
+            <div class="island-header">
+                <div class="island-left">
+                    <div class="island-dot" id="islandDot"></div>
+                    <span class="island-title">Очистка PRO</span>
                 </div>
-                
-                <div class="island-content">
-                    <div class="island-info-row">
-                        <span class="island-info-label">Режим:</span>
-                        <span class="island-info-value" id="islandModeName">Вода</span>
-                    </div>
-                    <div class="island-info-row">
-                        <span class="island-info-label">Статус:</span>
-                        <span class="island-info-value" id="islandStatusText">Ожидание</span>
-                    </div>
-
-                    <button class="island-btn" id="islandStopBtn">ПРЕРВАТЬ</button>
-                </div>
+                <span class="island-timer" id="timerDisplay">02:00</span>
+            </div>
+            <div class="island-content">
+                <div class="island-info-row"><span class="island-info-label">Режим:</span><span id="islandModeName">Вода</span></div>
+                <div class="island-info-row"><span class="island-info-label">Вода на выходе:</span><span id="islandWaterOut">0.00 мл</span></div>
+                <button class="island-btn" id="islandStopBtn">ПРЕРВАТЬ СЕССИЮ</button>
             </div>
         </div>
     </div>
+</div>
 
+<div class="app">
     <div class="header">
         <div class="logo">
-            <h1>Очистка</h1>
-            <p>Жидкая очистка динамика</p>
+            <h1>ОЧИСТКА PRO</h1>
+            <p>Акустический дренаж и диагностика смартфона</p>
         </div>
     </div>
 
     <div class="hero glass">
-        
         <div class="main-time-controls">
-            <button class="time-btn" id="btnMinusTime">- 30 сек</button>
-            <div class="main-time-display" id="mainTimeDisplay">02:00</div>
-            <button class="time-btn" id="btnPlusTime">+ 30 сек</button>
+            <button class="time-btn" id="btnMinusTime">-30с</button>
+            <div class="main-time-display" id="mainTimeDisplay" style="font-size:22px; font-weight:800;">02:00</div>
+            <button class="time-btn" id="btnPlusTime">+30с</button>
         </div>
 
         <div class="orb-wrap">
-            <button class="orb" id="orb" type="button">
-                <h2 id="buttonText">СТАРТ</h2>
-            </button>
-            <div class="orb-ripple r1"></div>
-            <div class="orb-ripple r2"></div>
+            <button class="orb" id="orb"><h2 id="buttonText">СТАРТ</h2></button>
         </div>
 
         <canvas class="visualizer" id="visualizer"></canvas>
 
-        <div class="controls-header">
-            <div>
-                <span>Частота: </span>
-                <strong id="freq" style="color: white; font-size: 14px;">165Гц</strong>
-            </div>
-            <div class="turbo-toggle" id="turboToggle">
-                <div class="turbo-dot"></div>
-                <span>Турбо</span>
-            </div>
-        </div>
+        <button class="turbo-btn" id="turboToggle">Турбо буст 200%</button>
 
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+            <div>Текущая частота: <strong id="freq" style="color:var(--accent);">165 Гц</strong></div>
+        </div>
         <div class="slider-wrapper">
-            <input type="range" class="slider" id="slider" min="0" max="300" value="165">
+            <input type="range" class="slider" id="slider" min="20" max="20000" value="165">
         </div>
 
+        <div class="section-title">Быстрые пресеты частот</div>
+        <div style="display:flex; gap:6px; margin-bottom:15px;">
+            <button class="time-btn" onclick="setPresetFreq(60)">60 Гц</button>
+            <button class="time-btn" onclick="setPresetFreq(150)">150 Гц</button>
+            <button class="time-btn" onclick="setPresetFreq(440)">440 Гц</button>
+            <button class="time-btn" onclick="setPresetFreq(1000)">1 кГц</button>
+        </div>
+
+        <div class="section-title">Задать таймер сессии</div>
+        <div style="display:flex; gap:6px; margin-bottom:15px;">
+            <button class="time-btn" onclick="setPresetTime(60)">1 Мин</button>
+            <button class="time-btn" onclick="setPresetTime(180)">3 Мин</button>
+            <button class="time-btn" onclick="setPresetTime(300)">5 Мин</button>
+        </div>
+
+        <div class="section-title">Режимы очистки</div>
         <div class="modes">
-            <button class="mode glass active" data-mode="water" type="button">
-                <h4>Вода</h4>
-                <p>Выталкивание</p>
-            </button>
-            <button class="mode glass" data-mode="bass" type="button">
-                <h4>Бас</h4>
-                <p>Низкие частоты</p>
-            </button>
-            <button class="mode glass" data-mode="smart" type="button">
-                <h4>Умный</h4>
-                <p>AI алгоритм</p>
-            </button>
+            <button class="mode active" data-mode="water"><h4>Вода</h4><p>Выталкивание</p></button>
+            <button class="mode" data-mode="bass"><h4>Бас</h4><p>Глубокий удар</p></button>
+            <button class="mode" data-mode="smart"><h4>Умный</h4><p>AI Алгоритм</p></button>
+        </div>
+    </div>
+
+    <div class="glass">
+        <div class="section-title">Форма звуковой волны</div>
+        <div class="grid-options">
+            <button class="opt-btn active" id="wave_sine" onclick="setWaveform('sine')">Синусоида</button>
+            <button class="opt-btn" id="wave_square" onclick="setWaveform('square')">Квадрат (Жесткий)</button>
+            <button class="opt-btn" id="wave_triangle" onclick="setWaveform('triangle')">Треугольник</button>
+            <button class="opt-btn" id="wave_sawtooth" onclick="setWaveform('sawtooth')">Пила (Максимум)</button>
         </div>
 
+        <div class="section-title">Локация очистки (Стерео)</div>
+        <div style="display:flex; gap:6px; margin-bottom:15px;">
+            <button class="time-btn active" id="chan_center" onclick="setChannel(0)">Оба динамика</button>
+            <button class="time-btn" id="chan_left" onclick="setChannel(-1)">Левый</button>
+            <button class="time-btn" id="chan_right" onclick="setChannel(1)">Правый</button>
+        </div>
+
+        <div class="section-title">Специальные Утилиты</div>
+        <div class="grid-options">
+            <button class="opt-btn" id="modeSweep" onclick="toggleSweep()">Частотный Свип</button>
+            <button class="opt-btn" id="modePulse" onclick="togglePulse()">Импульсы (Удар)</button>
+            <button class="opt-btn" id="modeNoise" onclick="toggleNoise()">Белый Шум</button>
+            <button class="opt-btn" id="modeUltra" onclick="activateUltrasonic()">Ультразвук</button>
+            <button class="opt-btn" id="modeDust" onclick="activateAntiDust()">Анти-Пыль</button>
+            <button class="opt-btn" onclick="toggleOledSaver()">Выключить экран</button>
+        </div>
+
+        <div class="section-title">Акустический тест</div>
+        <div class="mic-box">
+            <span>Шум извне (Микрофон):</span>
+            <span class="mic-db" id="micStatus" onclick="initMic()">Включить микрофон</span>
+        </div>
+
+        <div class="section-title">Статистика системы</div>
         <div class="stats">
             <div class="card glass">
                 <h3 id="statPower">98%</h3>
-                <p>Мощность</p>
+                <p>Gain уровень</p>
             </div>
             <div class="card glass">
-                <h3 id="statFreq">250Гц</h3>
-                <p>Максимум</p>
+                <h3 id="statWaterTotal">0.00 мл</h3>
+                <p>Выбито воды</p>
             </div>
             <div class="card glass">
-                <h3 id="statType">Мягко</h3>
-                <p>Адаптация</p>
+                <h3 id="statSessions">0</h3>
+                <p>Сессий окончено</p>
             </div>
         </div>
     </div>
 
-    <div class="bottom-section">
-        <div class="dock glass">
-            <button class="dock-item active" data-target="water" type="button">Очистка</button>
-            <button class="dock-item" data-target="bass" type="button">Усиление</button>
-            <button class="dock-item" data-target="smart" type="button">Умный</button>
+    <div class="glass">
+        <div class="section-title">Эксклюзивные Скины</div>
+        <div class="skin-container">
+            <div class="skin-grid">
+                <button class="skin-item active" onclick="switchTheme('water', this)">Синий океан</button>
+                <button class="skin-item" onclick="switchTheme('bass', this)">Фиолетовый неон</button>
+                <button class="skin-item" onclick="switchTheme('smart', this)">Зеленый эко</button>
+            </div>
+            <div class="skin-grid" style="margin-top: 6px;">
+                <button class="skin-item" onclick="switchTheme('cyber', this)">Киберпанк</button>
+                <button class="skin-item" onclick="switchTheme('volcano', this)">Вулкан</button>
+            </div>
         </div>
-        <div class="developer-signature">Разработчик EGORKIN</div>
-        <div class="homebar"></div>
+        <div class="developer-signature">Разработчик EGORKIN • v2.2 Fixed Floating Island</div>
     </div>
 </div>
 
 <script>
-/* БЕЗОПАСНАЯ ИНИЦИАЛИЗАЦИЯ */
 let tg = null;
-try {
-    if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
-        if (tg.expand) tg.expand();
-    }
-} catch (e) {}
+try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; if (tg.expand) tg.expand(); } } catch(e){}
 
 function triggerHaptic(style) {
-    if (!style) style = 'light';
     try {
-        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style);
-        else if (navigator.vibrate) navigator.vibrate(style === 'heavy' ? [50] : [20]);
-    } catch(e) {}
+        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light');
+        else if (navigator.vibrate) navigator.vibrate(style === 'heavy' ? [40] : [15]);
+    } catch(e){}
 }
 
-/* ФУНКЦИЯ УВЕДОМЛЕНИЙ */
-let toastTimeout;
-function showToast(message, duration = 3000) {
-    const toast = document.getElementById('appToast');
-    toast.innerText = message;
-    toast.classList.add('show');
-    triggerHaptic('light');
-    
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-        toast.classList.remove('show');
-    }, duration);
+function showToast(msg) {
+    const t = document.getElementById('appToast');
+    t.innerText = msg; 
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ПЕРЕМЕННЫЕ */
-let audioContext = null;
+/* СИСТЕМНЫЕ ПЕРЕМЕННЫЕ */
+let audioCtx = null;
 let oscillator = null;
 let gainNode = null;
+let pannerNode = null; 
+let noiseNode = null;   
 
 let playing = false;
 let isTurbo = false;
 let currentMode = 'water';
+let selectedWaveform = 'sine'; 
+let panValue = 0; 
 let timerInterval;
-let timeLeft = 120; 
+let timeLeft = 120;
+let waterEjected = 0.0; 
+let completedSessions = 0; 
 
+let isSweepActive = false; 
+let isPulseActive = false; 
+let isNoiseActive = false; 
+let pulseInterval = null;
+
+/* Настройки только для звуковых режимов */
 const modeSettings = {
-    water: { minF: 100, maxF: 250, type: 'sine', step: 0.4, label: 'Вода', stat: 'Мягко' },
-    bass:  { minF: 30,  maxF: 100, type: 'triangle', step: 0.2, label: 'Бас', stat: 'Глубоко' },
-    smart: { minF: 50,  maxF: 300, type: 'sawtooth', step: 0.8, label: 'Умный', stat: 'Агрес.' }
+    water: { minF: 100, maxF: 250, type: 'sine', label: 'Вода' },
+    bass:  { minF: 30,  maxF: 100, type: 'triangle', label: 'Бас' },
+    smart: { minF: 50,  maxF: 300, type: 'sawtooth', label: 'Умный' }
 };
 
-// DOM Элементы
+const slider = document.getElementById('slider');
+const freqText = document.getElementById('freq');
 const orb = document.getElementById('orb');
 const buttonText = document.getElementById('buttonText');
-const slider = document.getElementById('slider');
-const freq = document.getElementById('freq');
-const turboToggle = document.getElementById('turboToggle');
-const statPower = document.getElementById('statPower');
-const statFreq = document.getElementById('statFreq');
-const statType = document.getElementById('statType');
-const flash = document.getElementById('flash');
-
-// Остров и Время
-const island = document.getElementById('island');
-const islandDot = document.getElementById('islandDot');
 const timerDisplay = document.getElementById('timerDisplay');
 const mainTimeDisplay = document.getElementById('mainTimeDisplay');
 const islandModeName = document.getElementById('islandModeName');
-const islandStatusText = document.getElementById('islandStatusText');
-const islandStopBtn = document.getElementById('islandStopBtn');
-const btnMinusTime = document.getElementById('btnMinusTime');
-const btnPlusTime = document.getElementById('btnPlusTime');
-let isIslandOpen = false;
+const statPower = document.getElementById('statPower');
+const island = document.getElementById('island');
 
-/* ЛОГИКА ОСТРОВКА */
-island.addEventListener('click', function(e) {
-    if (e.target.closest('button')) return;
-    
-    isIslandOpen = !isIslandOpen;
+document.getElementById('btnMinusTime').addEventListener('click', () => {
+    if (timeLeft > 30) { timeLeft -= 30; updateTimerUI(); triggerHaptic('light'); }
+});
+document.getElementById('btnPlusTime').addEventListener('click', () => {
+    timeLeft += 30; updateTimerUI(); triggerHaptic('light');
+});
+
+function setPresetFreq(hz) {
+    slider.value = hz;
+    updateSliderUI(hz);
+    if (oscillator && playing) oscillator.frequency.value = hz;
+    triggerHaptic('medium');
+}
+function setPresetTime(sec) {
+    timeLeft = sec;
+    updateTimerUI();
+    triggerHaptic('medium');
+}
+
+function setWaveform(w) {
+    selectedWaveform = w;
+    document.querySelectorAll('[id^="wave_"]').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('wave_' + w);
+    if (btn) btn.classList.add('active');
+    if (oscillator) oscillator.type = w;
     triggerHaptic('light');
-    if (isIslandOpen) {
-        island.classList.add('expanded');
-    } else {
-        island.classList.remove('expanded');
-    }
-});
+}
 
-islandStopBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
+function setChannel(val) {
+    panValue = val;
+    document.getElementById('chan_center').classList.remove('active');
+    document.getElementById('chan_left').classList.remove('active');
+    document.getElementById('chan_right').classList.remove('active');
+    if(val === 0) document.getElementById('chan_center').classList.add('active');
+    if(val === -1) document.getElementById('chan_left').classList.add('active');
+    if(val === 1) document.getElementById('chan_right').classList.add('active');
+    if (pannerNode) pannerNode.pan.setValueAtTime(val, audioCtx.currentTime);
+    triggerHaptic('light');
+}
+
+function toggleSweep() {
+    isSweepActive = !isSweepActive;
+    document.getElementById('modeSweep').classList.toggle('active', isSweepActive);
+    triggerHaptic('medium');
+}
+
+function togglePulse() {
+    isPulseActive = !isPulseActive;
+    document.getElementById('modePulse').classList.toggle('active', isPulseActive);
+    triggerHaptic('medium');
+    if (!isPulseActive && gainNode && playing) {
+        gainNode.gain.setValueAtTime(isTurbo ? 0.6 : 0.35, audioCtx.currentTime);
+    }
+}
+
+function toggleNoise() {
+    isNoiseActive = !isNoiseActive;
+    document.getElementById('modeNoise').classList.toggle('active', isNoiseActive);
     triggerHaptic('heavy');
-    if (playing) stopProcess();
-    island.classList.remove('expanded');
-    isIslandOpen = false;
-});
-
-// УПРАВЛЕНИЕ ВРЕМЕНЕМ
-function setTimeLeft(seconds) {
-    timeLeft = seconds;
-    let formatted = formatTime(seconds);
-    timerDisplay.innerText = formatted;
-    mainTimeDisplay.innerText = formatted;
+    if (playing) { stopAudio(); startAudio(); }
 }
 
-btnPlusTime.addEventListener('click', function(e) {
-    e.stopPropagation();
-    triggerHaptic('medium');
-    setTimeLeft(timeLeft + 30);
-});
-
-btnMinusTime.addEventListener('click', function(e) {
-    e.stopPropagation();
-    triggerHaptic('medium');
-    if (timeLeft > 30) {
-        setTimeLeft(timeLeft - 30);
-    } else {
-        setTimeLeft(0);
-        if (playing) stopProcess();
-    }
-});
-
-/* ОСНОВНАЯ ЛОГИКА */
-function formatTime(seconds) {
-    let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    let s = (seconds % 60).toString().padStart(2, '0');
-    return m + ':' + s;
+function activateUltrasonic() {
+    isNoiseActive = false; document.getElementById('modeNoise').classList.remove('active');
+    setWaveform('sine');
+    setPresetFreq(16500);
+    showToast('Запущен Ультразвук 16.5 кГц');
 }
 
-function updateSliderUI(val) {
-    let hz = Math.floor(val) + 'Гц';
-    freq.innerText = hz;
-    
-    let percent = ((val - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent) ${percent}%, rgba(255,255,255,.08) ${percent}%)`;
+function activateAntiDust() {
+    isNoiseActive = false; document.getElementById('modeNoise').classList.remove('active');
+    setWaveform('square');
+    setPresetFreq(45);
+    showToast('Режим удаления пыли запущен');
 }
 
-['input', 'change'].forEach(evt => {
-    slider.addEventListener(evt, () => {
-        updateSliderUI(slider.value);
-        if (oscillator && playing) oscillator.frequency.value = Number(slider.value);
-    });
+function toggleOledSaver() {
+    if(!playing) { showToast('Сначала запустите процесс!'); return; }
+    document.getElementById('oledSaver').style.display = 'flex';
+}
+document.getElementById('oledSaver').addEventListener('click', () => {
+    document.getElementById('oledSaver').style.display = 'none';
 });
 
-turboToggle.addEventListener('click', () => {
+/* ТУРБО БУСТЕР */
+document.getElementById('turboToggle').addEventListener('click', () => {
     isTurbo = !isTurbo;
-    triggerHaptic('medium');
-    turboToggle.classList.toggle('active', isTurbo);
-    statPower.innerText = isTurbo ? 'MAX' : '98%';
+    document.getElementById('turboToggle').classList.toggle('active', isTurbo);
+    statPower.innerText = isTurbo ? 'BOOST 200%' : '98%';
+    triggerHaptic('heavy');
+    if (gainNode && playing) {
+        gainNode.gain.setValueAtTime(isTurbo ? 0.6 : 0.35, audioCtx.currentTime);
+    }
 });
 
-function switchMode(modeName) {
-    if (currentMode === modeName) return;
-    
-    currentMode = modeName;
-    document.body.className = currentMode;
-    
-    document.querySelectorAll('.mode').forEach(m => {
-        m.classList.toggle('active', m.dataset.mode === currentMode);
-    });
-    document.querySelectorAll('.dock-item').forEach(t => {
-        t.classList.toggle('active', t.dataset.target === currentMode);
-    });
-
-    let settings = modeSettings[currentMode];
-    statFreq.innerText = settings.maxF + 'Гц';
-    statType.innerText = settings.stat;
-    
-    islandModeName.innerText = settings.label;
-    
-    if (playing) {
-        stopAudio(true);
-        setTimeout(startAudio, 50); 
-    }
-
-    flash.classList.remove('active');
-    void flash.offsetWidth; 
-    flash.classList.add('active');
-}
-
+/* УПРАВЛЕНИЕ АУДИОПОТОКОМ */
 function startAudio() {
-    let AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
+    let AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!audioCtx) audioCtx = new AudioContextClass();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    if (!audioContext) audioContext = new AudioCtx();
-    if (audioContext.state === 'suspended') audioContext.resume();
+    gainNode = audioCtx.createGain();
+    pannerNode = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
 
-    oscillator = audioContext.createOscillator();
-    gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    let targetVolume = isTurbo ? 0.6 : 0.35;
 
-    let settings = modeSettings[currentMode];
-    oscillator.type = settings.type;
-    
-    if (slider.value < settings.minF || slider.value > settings.maxF) {
-        slider.value = (settings.minF + settings.maxF) / 2;
+    if (isNoiseActive) {
+        let bufferSize = 2 * audioCtx.sampleRate,
+            noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
+            output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+        noiseNode = audioCtx.createBufferSource();
+        noiseNode.buffer = noiseBuffer;
+        noiseNode.loop = true;
+        
+        if(pannerNode) { noiseNode.connect(pannerNode); pannerNode.connect(gainNode); }
+        else { noiseNode.connect(gainNode); }
+        noiseNode.start();
+    } else {
+        oscillator = audioCtx.createOscillator();
+        oscillator.type = selectedWaveform;
+        oscillator.frequency.value = Number(slider.value);
+        
+        if(pannerNode) { oscillator.connect(pannerNode); pannerNode.connect(gainNode); }
+        else { oscillator.connect(gainNode); }
+        oscillator.start();
     }
-    
-    oscillator.frequency.value = Number(slider.value);
-    
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(isTurbo ? 0.4 : 0.25, audioContext.currentTime + 0.3);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    oscillator.start();
+    gainNode.connect(audioCtx.destination);
+    gainNode.gain.linearRampToValueAtTime(targetVolume, audioCtx.currentTime + 0.2);
+
+    if (pannerNode) pannerNode.pan.setValueAtTime(panValue, audioCtx.currentTime);
+
+    if (isPulseActive) {
+        let state = true;
+        pulseInterval = setInterval(() => {
+            if(gainNode) {
+                gainNode.gain.setValueAtTime(state ? targetVolume : 0.01, audioCtx.currentTime);
+                state = !state;
+            }
+        }, 150);
+    }
 }
 
-function stopAudio(immediate) {
-    if (oscillator && gainNode) {
-        const stopTime = audioContext.currentTime + (immediate ? 0.05 : 0.3);
-        gainNode.gain.setValueAtTime(gainNode.gain.value, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime);
-        
-        oscillator.stop(stopTime);
-        setTimeout(() => {
-            if(oscillator) {
-                oscillator.disconnect();
-                oscillator = null;
-            }
-        }, (immediate ? 50 : 300));
-    }
+function stopAudio() {
+    clearInterval(pulseInterval);
+    if (oscillator) { try{ oscillator.stop(); oscillator.disconnect(); }catch(e){} oscillator = null; }
+    if (noiseNode) { try{ noiseNode.stop(); noiseNode.disconnect(); }catch(e){} noiseNode = null; }
+    if (gainNode) { try{ gainNode.disconnect(); }catch(e){} gainNode = null; }
+}
+
+function updateTimerUI() {
+    let f = formatTime(timeLeft);
+    timerDisplay.innerText = f;
+    mainTimeDisplay.innerText = f;
+    document.getElementById('saverTimer').innerText = f;
 }
 
 function stopProcess() {
-    stopAudio(false);
+    stopAudio();
     clearInterval(timerInterval);
     playing = false;
     orb.classList.remove('active');
     buttonText.innerText = 'СТАРТ';
-    
+    document.getElementById('islandDot').classList.remove('active');
+    document.getElementById('oledSaver').style.display = 'none';
+
     if (timeLeft <= 0) {
-        setTimeLeft(120);
-        showToast('Очистка завершена!');
+        completedSessions++;
+        document.getElementById('statSessions').innerText = completedSessions;
+        timeLeft = 120; 
+        updateTimerUI();
+        showToast('Очистка завершена успешно!');
     }
-    
-    islandDot.classList.remove('active');
-    timerDisplay.classList.remove('active');
-    mainTimeDisplay.classList.remove('active');
-    islandStatusText.innerText = 'Ожидание';
-    islandStatusText.style.color = 'var(--sub)';
 }
 
-orb.addEventListener('click', function(e) {
-    e.preventDefault();
+orb.addEventListener('click', () => {
     triggerHaptic('heavy');
     if (!playing) {
+        playing = true;
         startAudio();
         orb.classList.add('active');
         buttonText.innerText = 'СТОП';
-        playing = true;
-        
-        islandDot.classList.add('active');
-        timerDisplay.classList.add('active');
-        mainTimeDisplay.classList.add('active');
-        islandStatusText.innerText = 'В процессе...';
-        islandStatusText.style.color = 'var(--accent)';
-        
-        showToast('Сделайте звук на максимум!', 4000);
-        
-        timerInterval = setInterval(() => {
-            setTimeLeft(timeLeft - 1);
-            if(timeLeft <= 0) stopProcess();
-        }, 1000);
+        document.getElementById('islandDot').classList.add('active');
+        showToast('Очистка запущена! Прибавьте громкость!');
 
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            
+            if(playing) {
+                let multiplier = isTurbo ? 0.014 : 0.007;
+                waterEjected += Math.random() * multiplier;
+                let dataStr = waterEjected.toFixed(2) + ' мл';
+                document.getElementById('islandWaterOut').innerText = dataStr;
+                document.getElementById('statWaterTotal').innerText = dataStr;
+            }
+
+            if (timeLeft <= 0) stopProcess();
+        }, 1000);
     } else {
         stopProcess();
     }
 });
 
-document.querySelectorAll('.mode').forEach(mode => {
-    mode.addEventListener('click', (e) => {
-        e.preventDefault();
+/* ИСПРАВЛЕННЫЙ СЕЛЕКТОР ЗВУКОВЫХ РЕЖИМОВ */
+document.querySelectorAll('.mode').forEach(element => {
+    element.addEventListener('click', function() {
+        document.querySelectorAll('.mode').forEach(m => m.classList.remove('active'));
+        this.classList.add('active');
+        
+        let mode = this.getAttribute('data-mode');
+        currentMode = mode;
+        
+        let sett = modeSettings[mode];
+        islandModeName.innerText = sett.label;
+        setWaveform(sett.type);
+        setPresetFreq((sett.minF + sett.maxF)/2);
         triggerHaptic('medium');
-        switchMode(mode.dataset.mode);
     });
 });
 
-document.querySelectorAll('.dock-item').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-        e.preventDefault();
-        triggerHaptic('light');
-        switchMode(tab.dataset.target);
+/* ПОЛНОСТЬЮ АВТОНОМНЫЙ СЕЛЕКТОР ТЕМ (СКИНОВ) - ИСКЛЮЧИТЕЛЬНО ДЛЯ ЦВЕТА */
+function switchTheme(themeClassName, btnElement) {
+    document.body.className = themeClassName;
+    document.querySelectorAll('.skin-item').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    triggerHaptic('medium');
+}
+
+/* ТЕСТ МИКРОФОНА */
+let micStream = null;
+function initMic() {
+    if(micStream) return;
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+    .then(stream => {
+        micStream = stream;
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        
+        function checkVol() {
+            if(!micStream) return;
+            requestAnimationFrame(checkVol);
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for(let i=0; i<bufferLength; i++) sum += dataArray[i];
+            let avg = sum / bufferLength;
+            document.getElementById('micStatus').innerText = Math.round(avg) + ' дБ (Активен)';
+        }
+        checkVol();
+    }).catch(err => {
+        document.getElementById('micStatus').innerText = 'Ошибка доступа';
     });
-});
-
-/* ВИЗУАЛИЗАТОР */
-const visCanvas = document.getElementById('visualizer');
-const visCtx = visCanvas.getContext('2d');
-
-function resizeVisCanvas() {
-    visCanvas.width = visCanvas.parentElement.clientWidth - 44; 
-    visCanvas.height = 60;
-}
-resizeVisCanvas();
-window.addEventListener('resize', resizeVisCanvas);
-
-function drawVisualizer() {
-    requestAnimationFrame(drawVisualizer);
-    visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
-    
-    const bars = 32;
-    const barWidth = 4;
-    const gap = 6;
-    const totalWidth = bars * barWidth + (bars - 1) * gap;
-    const startX = (visCanvas.width - totalWidth) / 2;
-    
-    let speedMult = currentMode === 'bass' ? 100 : (currentMode === 'smart' ? 70 : 150);
-    if (isTurbo) speedMult *= 0.6; 
-
-    for (let i = 0; i < bars; i++) {
-        let distFromCenter = Math.abs(i - bars/2) / (bars/2);
-        let baseHeight = 24 * (1 - distFromCenter * 0.5); 
-        
-        let wave = playing ? Math.sin(Date.now() / speedMult + i * 0.5) * baseHeight + baseHeight : 6;
-        let x = startX + i * (barWidth + gap);
-        let y = visCanvas.height / 2 - wave / 2;
-        
-        let gradient = visCtx.createLinearGradient(0, 0, 0, visCanvas.height);
-        gradient.addColorStop(0, 'rgba(255,255,255,0.9)');
-        gradient.addColorStop(1, getComputedStyle(document.body).getPropertyValue('--accent'));
-        
-        visCtx.fillStyle = gradient;
-        visCtx.beginPath();
-        visCtx.roundRect(x, y, barWidth, wave, 10);
-        visCtx.fill();
-    }
-}
-drawVisualizer();
-
-/* ЧАСТИЦЫ */
-const partCanvas = document.getElementById('particles-canvas');
-const pCtx = partCanvas.getContext('2d');
-let particles = [];
-
-function resizePartCanvas() {
-    partCanvas.width = window.innerWidth;
-    partCanvas.height = window.innerHeight;
-}
-resizePartCanvas();
-window.addEventListener('resize', resizePartCanvas);
-
-class Particle {
-    constructor() { this.reset(); }
-    reset() {
-        this.x = partCanvas.width / 2 + (Math.random() - 0.5) * 150;
-        this.y = partCanvas.height / 2 - 50 + (Math.random() - 0.5) * 150;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 2 + 1;
-        this.vx = Math.cos(angle) * speed;
-        this.vy = Math.sin(angle) * speed - 1;
-        this.size = Math.random() * 2.5 + 1;
-        this.life = 1;
-        this.decay = Math.random() * 0.02 + 0.01;
-    }
-    update() {
-        if (!playing) {
-            this.life -= 0.04;
-        } else {
-            this.x += this.vx * (isTurbo ? 1.5 : 1);
-            this.y += this.vy * (isTurbo ? 1.5 : 1);
-            if (currentMode === 'bass') { this.x += this.vx * 0.8; this.y += this.vy * 0.8; } 
-            this.life -= this.decay;
-        }
-        if (this.life <= 0 && playing) this.reset();
-    }
-    draw() {
-        if (this.life > 0) {
-            pCtx.fillStyle = `rgba(255, 255, 255, ${this.life * 0.5})`;
-            pCtx.beginPath();
-            pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            pCtx.fill();
-        }
-    }
 }
 
-for(let i = 0; i < 60; i++) particles.push(new Particle());
-
-function drawParticles() {
-    requestAnimationFrame(drawParticles);
-    pCtx.clearRect(0, 0, partCanvas.width, partCanvas.height);
-    if (playing || particles.some(p => p.life > 0)) {
-        particles.forEach(p => { p.update(); p.draw(); });
-    }
-}
-drawParticles();
-
-/* АВТОСКАНЕР ЧАСТОТ */
-let lastDomUpdate = 0;
+/* РАБОТА СВИПА */
 setInterval(() => {
-    if (playing) {
-        let settings = modeSettings[currentMode];
-        let value = Number(slider.value);
-        let step = isTurbo ? settings.step * 2 : settings.step;
-        
-        value += step;
-        if (value > settings.maxF) value = settings.minF; 
-
-        slider.value = value;
-        if (oscillator) oscillator.frequency.value = value;
-
-        let now = Date.now();
-        if (now - lastDomUpdate > 80) {
-            updateSliderUI(value);
-            lastDomUpdate = now;
-        }
+    if (playing && isSweepActive && !isNoiseActive) {
+        let s = modeSettings[currentMode] || {maxF: 300, minF: 50};
+        let currentHz = Number(slider.value);
+        currentHz += 3;
+        if(currentHz > s.maxF) currentHz = s.minF;
+        slider.value = currentHz;
+        updateSliderUI(currentHz);
+        if(oscillator) oscillator.frequency.value = currentHz;
     }
-}, 35);
+}, 40);
 
-updateSliderUI(slider.value);
-// Регистрация Service Worker для PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(registration => {
-      console.log('SW registered: ', registration);
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
-    });
-  });
+function formatTime(s) {
+    return Math.floor(s/60).toString().padStart(2,'0') + ':' + (s%60).toString().padStart(2,'0');
 }
+function updateSliderUI(v) {
+    freqText.innerText = Math.floor(v) + ' Гц';
+}
+slider.addEventListener('input', () => {
+    updateSliderUI(slider.value);
+    if(oscillator && playing) oscillator.frequency.value = Number(slider.value);
+});
+
+/* ИНТЕРФЕЙС ОСТРОВКА */
+island.addEventListener('click', (e) => {
+    if(e.target.closest('button')) return;
+    island.classList.toggle('expanded');
+    triggerHaptic('light');
+});
+document.getElementById('islandStopBtn').addEventListener('click', () => {
+    stopProcess(); island.classList.remove('expanded');
+});
+
+/* АНИМАЦИЯ ЭКВАЛАЙЗЕРА */
+const canvas = document.getElementById('visualizer');
+const ctx = canvas.getContext('2d');
+function resVis() { canvas.width = canvas.parentElement.clientWidth; canvas.height = 50; }
+resVis(); window.addEventListener('resize', resVis);
+
+function draw() {
+    requestAnimationFrame(draw);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let bars = 24, gap = 6, w = (canvas.width - (bars-1)*gap)/bars;
+    for(let i=0; i<bars; i++) {
+        let h = playing ? Math.sin(Date.now()/120 + i*0.4)*18 + 22 : 4;
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--accent');
+        ctx.beginPath(); ctx.roundRect(i*(w+gap), 25-h/2, w, h, 6); ctx.fill();
+    }
+}
+draw();
 </script>
 </body>
 </html>
