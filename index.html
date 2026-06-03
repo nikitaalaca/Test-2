@@ -53,6 +53,12 @@ html, body {
 body {
     font-family: 'Inter', sans-serif;
     color: white;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ФИКСИРОВАННЫЙ ФОН */
@@ -109,7 +115,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 0 16px 16px;
+    padding: 0 0px 0px;
     padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
@@ -119,9 +125,9 @@ body {
 /* Контейнер БЕЗ блюра по просьбе */
 .top-bar-container {
     position: sticky;
-    top: 0;
+    top: 10;
     z-index: 1000;
-    margin: 0 -16px;
+    margin: 0 -20px;
     padding: env(safe-area-inset-top, 20px) 16px 16px;
     background: transparent;
     display: flex;
@@ -137,7 +143,7 @@ body {
 }
 
 .island {
-    width: 195px; /* Расширили чтобы текст не слипался */
+    width: 225px; /* Расширили чтобы текст не слипался */
     height: 44px;
     border-radius: 40px;
     background: #000000;
@@ -157,9 +163,9 @@ body {
 .island:active { transform: scale(0.95); }
 
 .island.expanded {
-    width: 90vw;
+    width: 100vw;
     max-width: 320px;
-    height: 140px; /* Уменьшили высоту, так как убрали кнопки времени */
+    height: 160px; /* Уменьшили высоту, так как убрали кнопки времени */
     border-radius: 36px;
     background: rgba(10, 10, 15, 0.98);
     border: 1px solid rgba(255,255,255,0.12);
@@ -799,7 +805,7 @@ function stopProcess() {
     // Сброс времени только если дошло до 0
     if (timeLeft <= 0) {
         setTimeLeft(120);
-        showToast('✅ Очистка завершена!');
+        showToast('Очистка завершена!');
     }
     
     islandDot.classList.remove('active');
@@ -825,7 +831,7 @@ orb.addEventListener('click', function(e) {
         islandStatusText.style.color = 'var(--accent)';
         
         // Показываем подсказку
-        showToast('🔊 Сделайте звук на максимум!', 4000);
+        showToast('Сделайте звук на максимум!', 4000);
         
         timerInterval = setInterval(() => {
             setTimeLeft(timeLeft - 1);
