@@ -1,12 +1,13 @@
 {
-  "name": "Очистка PRO",
-  "short_name": "Очистка",
-  "description": "Приложение для очистки динамика смартфона",
+  "name": "Очистка PRO Аудио Дренаж",
+  "short_name": "Очистка v2",
+  "description": "Профессиональный комплекс утилит для очистки звуковых каналов смартфона",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#050816",
   "theme_color": "#050816",
   "orientation": "portrait",
+  "categories": ["utilities", "productivity"],
   "icons": [
     {
       "src": "icon-192x192.png",
